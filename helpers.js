@@ -47,13 +47,11 @@ function drawCharacter(scene) {
         object.castShadow = true;
       }
     });
-    model.position.x = 4.2;
     model.position.y = -1;
     group.add(model);
 
     skeleton = new THREE.SkeletonHelper(model);
     skeleton.visible = true;
-    // skeleton.position.x = 4;
     group.add(skeleton);
 
     scene.add(group);
