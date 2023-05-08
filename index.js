@@ -46,14 +46,14 @@ function animate() {
     // character.translateZ(0.1);
   }
   TWEEN.update();
-  if (mixers) {
-    mixers.map((m) => m.update(delta));
+  if (characters !== undefined) {
+    Object.values(characters).map((character) => character.mixer.update(delta));
   }
   renderer.render(scene, camera);
 }
 animate();
 
-var instructions = ["character"];
+var instructions = ["character milady1"];
 
 function processInstruction() {
   if (instructions.length === 0) {
@@ -76,7 +76,9 @@ function processInstruction() {
       }, 1000);
       break;
     case "go":
-      var character = Object.values(characters)[0];
+      var character = Object.values(characters)[0].group;
+      switchAnimation("milady1", 0);
+
       var args = parts[1].split(",");
       var x = parseInt(args[0]);
       var z = parseInt(args[1]);
@@ -94,6 +96,13 @@ function processInstruction() {
       setTimeout(function () {
         processInstruction();
       }, duration);
+      break;
+    case "say":
+      var character = Object.values(characters)[0].group;
+      switchAnimation("milady1", 1);
+      setTimeout(function () {
+        processInstruction();
+      }, 5000);
       break;
     default:
       processInstruction();

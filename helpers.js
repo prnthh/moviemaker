@@ -33,7 +33,7 @@ function drawCubeWalls() {
   return group;
 }
 
-function drawCharacter(name = "Milady", scene) {
+function drawCharacter(name, scene) {
   const group = new THREE.Group();
 
   const loader = new THREE.FBXLoader();
@@ -44,20 +44,50 @@ function drawCharacter(name = "Milady", scene) {
       c.castShadow = true;
     });
 
-    const anim = new THREE.FBXLoader();
-    anim.setPath("./assets/anim/");
-    anim.load("Walk.fbx", (anim) => {
-      const m = new THREE.AnimationMixer(fbx);
-      mixers.push(m);
-      const idle = m.clipAction(anim.animations[0]);
-      idle.play();
+    const animLoader = new THREE.FBXLoader();
+    const animsToLoad = ["Walk.fbx", "Talk.fbx"]; // Add animation filenames here
+
+    const mixer = new THREE.AnimationMixer(fbx);
+    const animations = [];
+
+    animsToLoad.forEach((animFile) => {
+      animLoader.setPath("./assets/anim/");
+      animLoader.load(animFile, (anim) => {
+        const action = mixer.clipAction(anim.animations[0]);
+        animations.push(action);
+      });
     });
 
     fbx.position.y = -6;
     group.add(fbx);
     scene.add(group);
-    characters[name] = group;
+    // characters[name] = group;
+    characters[name] = {
+      group: group,
+      mixer: mixer,
+      animations: animations,
+    };
   });
+}
+
+function switchAnimation(characterName, animIndex) {
+  const character = characters[characterName];
+  if (!character) {
+    console.error(`Character ${characterName} not found.`);
+    return;
+  }
+
+  character.animations.forEach((anim) => {
+    anim.stop();
+  });
+
+  const animation = character.animations[animIndex];
+  if (!animation) {
+    console.error(`Animation index ${animIndex} not found.`);
+    return;
+  }
+
+  animation.play();
 }
 
 function generateInstruction() {
@@ -69,7 +99,11 @@ function generateInstruction() {
       instructions.push("go " + x + "," + z);
       break;
     case 1:
-      instructions.push("say hello");
+      instructions.push(
+        "say " + words[Math.floor(Math.random() * words.length)]
+      );
       break;
   }
 }
+
+const words = ["feds are coming bro", "omg hiii", "i love you", "i hate you"];
