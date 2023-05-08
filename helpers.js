@@ -36,31 +36,27 @@ function drawCubeWalls() {
 function drawCharacter(name = "Milady", scene) {
   const group = new THREE.Group();
 
-  const loader = new THREE.GLTFLoader().setPath("assets/");
-  loader.load("Milady.gltf", function (gltf) {
-    model = gltf.scene;
-
-    let textureLoader = new THREE.TextureLoader();
-    model.traverse(function (object) {
-      if (object.isMesh) {
-        // object.material.map = texture;
-        object.castShadow = true;
-      }
+  const loader = new THREE.FBXLoader();
+  loader.setPath("./assets/");
+  loader.load("MiladySkinned.fbx", (fbx) => {
+    fbx.scale.setScalar(0.05);
+    fbx.traverse((c) => {
+      c.castShadow = true;
     });
-    model.position.y = -1;
-    group.add(model);
 
-    skeleton = new THREE.SkeletonHelper(model);
-    skeleton.visible = true;
-    group.add(skeleton);
+    const anim = new THREE.FBXLoader();
+    anim.setPath("./assets/anim/");
+    anim.load("Walk.fbx", (anim) => {
+      const m = new THREE.AnimationMixer(fbx);
+      mixers.push(m);
+      const idle = m.clipAction(anim.animations[0]);
+      idle.play();
+    });
 
+    fbx.position.y = -6;
+    group.add(fbx);
     scene.add(group);
-
-    group.scale.set(5, 5, 5);
     characters[name] = group;
-    // const animations = gltf.animations;
-
-    // mixer = new THREE.AnimationMixer(model);
   });
 }
 

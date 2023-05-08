@@ -14,7 +14,7 @@ var renderer = new THREE.WebGLRenderer({
   canvas: myCanvas,
 });
 renderer.setSize(window.innerWidth - 4, window.innerHeight - 4);
-console.log(THREE);
+
 const controls = new THREE.OrbitControls(camera, myCanvas);
 // const geometry = new THREE.BoxGeometry();
 // const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
@@ -27,6 +27,8 @@ const group = drawCubeWalls();
 scene.add(group);
 
 var characters = {};
+var mixers = [];
+var clock = new THREE.Clock();
 
 camera.position.z = 15;
 const light = new THREE.AmbientLight(0x404040, 5); // soft white light
@@ -35,13 +37,18 @@ scene.add(light);
 function animate() {
   requestAnimationFrame(animate);
 
+  // const delta = THREE.clock.getDelta();
+  const delta = clock.getDelta();
+
   if (characters !== undefined) {
     // character.rotation.x += 0.01;
     // character.rotation.y += 0.01;
     // character.translateZ(0.1);
   }
   TWEEN.update();
-
+  if (mixers) {
+    mixers.map((m) => m.update(delta));
+  }
   renderer.render(scene, camera);
 }
 animate();
