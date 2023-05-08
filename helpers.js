@@ -31,6 +31,13 @@ function drawCubeWalls() {
   group.add(helper5);
 
   return group;
+
+  var planeGeometry = new THREE.PlaneGeometry(10, 10);
+  var planeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+  var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+  plane.position.z = -5;
+  plane.scale.setScalar(5);
+  return plane;
 }
 
 function drawCharacter(name, scene) {
@@ -91,19 +98,19 @@ function switchAnimation(characterName, animIndex) {
 }
 
 function generateInstruction() {
-  var randomChoice = Math.floor(Math.random() * 2);
-  switch (randomChoice) {
-    case 0:
-      var x = Math.random() * 8 - 4;
-      var z = Math.random() * 8 - 4;
-      instructions.push("go " + x + "," + z);
-      break;
-    case 1:
-      instructions.push(
-        "say " + words[Math.floor(Math.random() * words.length)]
-      );
-      break;
-  }
+  // var randomChoice = Math.floor(Math.random() * 2);
+  // switch (randomChoice) {
+  //   case 0:
+  //     var x = Math.random() * 8 - 4;
+  //     var z = Math.random() * 8 - 4;
+  //     instructions.push("go " + x + "," + z);
+  //     break;
+  //   case 1:
+  //     instructions.push(
+  //       "say " + words[Math.floor(Math.random() * words.length)]
+  //     );
+  //     break;
+  // }
 }
 
 const words = ["feds are coming bro", "omg hiii", "i love you", "i hate you"];

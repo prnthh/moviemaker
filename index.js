@@ -53,12 +53,22 @@ function animate() {
 }
 animate();
 
-var instructions = ["character milady1"];
+var instructions = [
+  "character milady1",
+  "character milady2",
+  "go milady1 3,2",
+  "go milady1 2,4",
+  "go milady2 -3,2",
+  "go milady2 -2,4",
+  "say milady1 hello",
+  "say milady2 hello",
+];
 
 function processInstruction() {
   if (instructions.length === 0) {
-    if (infinite) generateInstruction();
-    else return;
+    // if (infinite) generateInstruction();
+    // else
+    return;
   }
   var instruction = instructions.shift();
   log.innerHTML += "#! " + instruction + "\n";
@@ -76,10 +86,11 @@ function processInstruction() {
       }, 1000);
       break;
     case "go":
-      var character = Object.values(characters)[0].group;
-      switchAnimation("milady1", 0);
+      var name = parts[1];
+      var character = characters[name].group;
+      switchAnimation(name, 0);
 
-      var args = parts[1].split(",");
+      var args = parts[2].split(",");
       var x = parseInt(args[0]);
       var z = parseInt(args[1]);
 
@@ -98,8 +109,9 @@ function processInstruction() {
       }, duration);
       break;
     case "say":
-      var character = Object.values(characters)[0].group;
-      switchAnimation("milady1", 1);
+      var name = parts[1];
+      var character = characters[name].group;
+      switchAnimation(name, 1);
       setTimeout(function () {
         processInstruction();
       }, 5000);
