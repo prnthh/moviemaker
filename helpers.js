@@ -57,7 +57,7 @@ function drawCharacter(scene) {
     scene.add(group);
 
     group.scale.set(5, 5, 5);
-    character = group;
+    characters["milady"] = group;
     // const animations = gltf.animations;
 
     // mixer = new THREE.AnimationMixer(model);
