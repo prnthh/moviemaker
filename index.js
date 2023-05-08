@@ -27,7 +27,6 @@ const group = drawCubeWalls();
 scene.add(group);
 
 var characters = {};
-drawCharacter(scene);
 
 camera.position.z = 15;
 const light = new THREE.AmbientLight(0x404040, 5); // soft white light
@@ -47,13 +46,7 @@ function animate() {
 }
 animate();
 
-var instructions = [];
-
-function generateInstruction() {
-  var x = Math.random() * 8 - 4;
-  var z = Math.random() * 8 - 4;
-  instructions.push("go " + x + "," + z);
-}
+var instructions = ["character"];
 
 function processInstruction() {
   if (instructions.length === 0) {
@@ -61,14 +54,22 @@ function processInstruction() {
     else return;
   }
   var instruction = instructions.shift();
-  console.log("doing instruction ", instruction);
-  log.innerHTML += instruction + "\n";
+  log.innerHTML += "#! " + instruction + "\n";
+  log.scrollTop = log.scrollHeight;
+
   var parts = instruction.split(" ");
   var command = parts[0];
 
   switch (command) {
+    case "character":
+      var name = parts[1];
+      drawCharacter(name, scene);
+      setTimeout(function () {
+        processInstruction();
+      }, 1000);
+      break;
     case "go":
-      var character = characters["milady"];
+      var character = Object.values(characters)[0];
       var args = parts[1].split(",");
       var x = parseInt(args[0]);
       var z = parseInt(args[1]);
@@ -87,6 +88,8 @@ function processInstruction() {
         processInstruction();
       }, duration);
       break;
+    default:
+      processInstruction();
   }
 }
 

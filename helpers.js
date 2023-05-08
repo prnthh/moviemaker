@@ -33,7 +33,7 @@ function drawCubeWalls() {
   return group;
 }
 
-function drawCharacter(scene) {
+function drawCharacter(name = "Milady", scene) {
   const group = new THREE.Group();
 
   const loader = new THREE.GLTFLoader().setPath("assets/");
@@ -57,9 +57,23 @@ function drawCharacter(scene) {
     scene.add(group);
 
     group.scale.set(5, 5, 5);
-    characters["milady"] = group;
+    characters[name] = group;
     // const animations = gltf.animations;
 
     // mixer = new THREE.AnimationMixer(model);
   });
+}
+
+function generateInstruction() {
+  var randomChoice = Math.floor(Math.random() * 2);
+  switch (randomChoice) {
+    case 0:
+      var x = Math.random() * 8 - 4;
+      var z = Math.random() * 8 - 4;
+      instructions.push("go " + x + "," + z);
+      break;
+    case 1:
+      instructions.push("say hello");
+      break;
+  }
 }
