@@ -41,9 +41,7 @@ function drawCubeWalls() {
 }
 
 const assetPath = "./assets/models/";
-function drawCharacter(name, scene) {
-  const modelToLoad = "Milady";
-
+function drawCharacter(name, scene, modelToLoad = "Milady") {
   const group = new THREE.Group();
 
   const loader = new THREE.FBXLoader();
@@ -55,13 +53,13 @@ function drawCharacter(name, scene) {
     });
 
     const animLoader = new THREE.FBXLoader();
-    const animsToLoad = ["Walk.fbx", "Talk.fbx"]; // Add animation filenames here
+    const animsToLoad = ["Sitting.fbx", "Kicking.fbx"]; // Add animation filenames here
 
     const mixer = new THREE.AnimationMixer(fbx);
     const animations = [];
 
     animsToLoad.forEach((animFile) => {
-      animLoader.setPath(assetPath + modelToLoad + "/anim/");
+      animLoader.setPath(assetPath + modelToLoad + "/anims/");
       animLoader.load(animFile, (anim) => {
         const action = mixer.clipAction(anim.animations[0]);
         animations.push(action);
@@ -78,6 +76,83 @@ function drawCharacter(name, scene) {
       animations: animations,
     };
   });
+}
+
+function drawText(message = "Milady\nWorld Order", position) {
+  const loader = new THREE.FontLoader();
+  loader.load("fonts/helvetiker_regular.typeface.json", function (font) {
+    const color = 0x006699;
+
+    const matDark = new THREE.LineBasicMaterial({
+      color: color,
+      side: THREE.DoubleSide,
+    });
+
+    const matLite = new THREE.MeshBasicMaterial({
+      color: color,
+      transparent: true,
+      opacity: 1,
+      side: THREE.DoubleSide,
+    });
+
+    const shapes = font.generateShapes(message, 1);
+
+    const geometry = new THREE.ShapeGeometry(shapes);
+
+    geometry.computeBoundingBox();
+
+    const xMid =
+      -0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x);
+
+    geometry.translate(xMid, 0, 0);
+
+    // make shape ( N.B. edge view not visible )
+
+    const text = new THREE.Mesh(geometry, matLite);
+    text.position.z = -1;
+    text.position.y = 3;
+    scene.add(text);
+
+    // destroy in two seconds
+    setTimeout(() => {
+      scene.remove(text);
+    }, 2000);
+
+    // make line shape ( N.B. edge view remains visible )
+
+    // const holeShapes = [];
+
+    // for (let i = 0; i < shapes.length; i++) {
+    //   const shape = shapes[i];
+
+    //   if (shape.holes && shape.holes.length > 0) {
+    //     for (let j = 0; j < shape.holes.length; j++) {
+    //       const hole = shape.holes[j];
+    //       holeShapes.push(hole);
+    //     }
+    //   }
+    // }
+
+    // shapes.push.apply(shapes, holeShapes);
+
+    // const lineText = new THREE.Object3D();
+
+    // for (let i = 0; i < shapes.length; i++) {
+    //   const shape = shapes[i];
+
+    //   const points = shape.getPoints();
+    //   const geometry = new THREE.BufferGeometry().setFromPoints(points);
+
+    //   geometry.translate(xMid, 0, 0);
+
+    //   const lineMesh = new THREE.Line(geometry, matDark);
+    //   lineText.add(lineMesh);
+    // }
+
+    // scene.add(lineText);
+
+    // render();
+  }); //end load function
 }
 
 function switchAnimation(characterName, animIndex) {

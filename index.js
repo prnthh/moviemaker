@@ -47,14 +47,6 @@ function animate() {
 }
 animate();
 
-var instructions = [
-  "character milady1",
-  "sleep 2000",
-  "go milady1 0,3",
-  "sleep 2000",
-  "say milady1 hello",
-];
-
 function addToQueue() {
   var instruction = document.getElementById("instruction").value;
   // split by ;
@@ -82,7 +74,8 @@ function processInstruction() {
   switch (command) {
     case "character":
       var name = parts[1];
-      drawCharacter(name, scene);
+      var model = parts[2];
+      drawCharacter(name, scene, model);
 
       break;
     case "go":
@@ -108,6 +101,7 @@ function processInstruction() {
       var name = parts[1];
       var character = characters[name].group;
       switchAnimation(name, 1);
+      drawText(parts.slice(2).join(" "), character.position);
       break;
     case "sleep":
       var duration = parseInt(parts[1]);
@@ -128,72 +122,16 @@ setTimeout(function () {
   processInstruction();
 }, 2000);
 
-const loader = new THREE.FontLoader();
-loader.load("fonts/helvetiker_regular.typeface.json", function (font) {
-  const color = 0x006699;
-
-  const matDark = new THREE.LineBasicMaterial({
-    color: color,
-    side: THREE.DoubleSide,
-  });
-
-  const matLite = new THREE.MeshBasicMaterial({
-    color: color,
-    transparent: true,
-    opacity: 1,
-    side: THREE.DoubleSide,
-  });
-
-  const message = "Milady\nWorld Order";
-
-  const shapes = font.generateShapes(message, 1);
-
-  const geometry = new THREE.ShapeGeometry(shapes);
-
-  geometry.computeBoundingBox();
-
-  const xMid = -0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x);
-
-  geometry.translate(xMid, 0, 0);
-
-  // make shape ( N.B. edge view not visible )
-
-  const text = new THREE.Mesh(geometry, matLite);
-  text.position.z = -1;
-  scene.add(text);
-
-  // make line shape ( N.B. edge view remains visible )
-
-  // const holeShapes = [];
-
-  // for (let i = 0; i < shapes.length; i++) {
-  //   const shape = shapes[i];
-
-  //   if (shape.holes && shape.holes.length > 0) {
-  //     for (let j = 0; j < shape.holes.length; j++) {
-  //       const hole = shape.holes[j];
-  //       holeShapes.push(hole);
-  //     }
-  //   }
-  // }
-
-  // shapes.push.apply(shapes, holeShapes);
-
-  // const lineText = new THREE.Object3D();
-
-  // for (let i = 0; i < shapes.length; i++) {
-  //   const shape = shapes[i];
-
-  //   const points = shape.getPoints();
-  //   const geometry = new THREE.BufferGeometry().setFromPoints(points);
-
-  //   geometry.translate(xMid, 0, 0);
-
-  //   const lineMesh = new THREE.Line(geometry, matDark);
-  //   lineText.add(lineMesh);
-  // }
-
-  // scene.add(lineText);
-
-  // render();
-}); //end load function
+var instructions = [
+  "character milady1 MiladySmiling",
+  "sleep 2000",
+  "go milady1 0,3",
+  "sleep 2000",
+  "say milady1 hello",
+  "sleep 2000",
+  "go milady1 0,5",
+  "sleep 2000",
+  "say milady1 goodbye",
+  "sleep 2000",
+  "go milady1 0,0",
+];
