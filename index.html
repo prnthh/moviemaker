@@ -8,8 +8,7 @@
       content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
     <script src="https://cdn.bootcdn.net/ajax/libs/three.js/r128/three.js"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/three@0.122.0/examples/js/controls/OrbitControls.js"></script> -->
-    <script src="OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.122.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fflate@0.7.4/umd/index.min.js"></script>
     <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
@@ -30,10 +29,20 @@
         padding: 5px;
       "
     >
-      <textarea readonly id="log" style="width: 300px; height: 200px"></textarea
-      ><br />
-      <button onclick="(function(){ infinite = !infinite })();">
-        pause generation
+      <div
+        readonly
+        id="log"
+        style="
+          width: 300px;
+          height: 200px;
+          background-color: aliceblue;
+          text-align: left;
+        "
+      ></div>
+      <br />
+      <input id="instruction" onkeyup="processTextbox(event)"> </input>
+      <button onclick="(function(){ addToQueue() })();">
+        run<br />(enter)
       </button>
     </div>
 

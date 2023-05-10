@@ -40,12 +40,15 @@ function drawCubeWalls() {
   return plane;
 }
 
+const assetPath = "./assets/models/";
 function drawCharacter(name, scene) {
+  const modelToLoad = "Milady";
+
   const group = new THREE.Group();
 
   const loader = new THREE.FBXLoader();
-  loader.setPath("./assets/");
-  loader.load("MiladySkinned.fbx", (fbx) => {
+  loader.setPath(assetPath);
+  loader.load(modelToLoad + "/model.fbx", (fbx) => {
     fbx.scale.setScalar(0.05);
     fbx.traverse((c) => {
       c.castShadow = true;
@@ -58,7 +61,7 @@ function drawCharacter(name, scene) {
     const animations = [];
 
     animsToLoad.forEach((animFile) => {
-      animLoader.setPath("./assets/anim/");
+      animLoader.setPath(assetPath + modelToLoad + "/anim/");
       animLoader.load(animFile, (anim) => {
         const action = mixer.clipAction(anim.animations[0]);
         animations.push(action);
@@ -95,6 +98,17 @@ function switchAnimation(characterName, animIndex) {
   }
 
   animation.play();
+}
+
+function printToLogs(text) {
+  const logs = document.getElementById("log");
+  logs.innerHTML += `<div> #! ${text}</div>`;
+  logs.scrollTop = logs.scrollHeight;
+}
+function processTextbox(e) {
+  if (e.key == "Enter") {
+    addToQueue();
+  }
 }
 
 function generateInstruction() {
