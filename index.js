@@ -81,7 +81,7 @@ function processInstruction() {
     case "go":
       var name = parts[1];
       var character = characters[name].group;
-      switchAnimation(name, 0);
+      switchAnimation(name, "Walk");
 
       var args = parts[2].split(",");
       var x = parseInt(args[0]);
@@ -100,7 +100,7 @@ function processInstruction() {
     case "say":
       var name = parts[1];
       var character = characters[name].group;
-      switchAnimation(name, 1);
+      switchAnimation(name, "Talk");
       drawText(parts.slice(2).join(" "), character.position);
       break;
     case "sleep":
@@ -109,6 +109,11 @@ function processInstruction() {
         processInstruction();
       }, duration);
       return;
+      break;
+    case "do":
+      var name = parts[1];
+      var animation = parts[2];
+      switchAnimation(name, animation);
       break;
     default:
       processInstruction();
@@ -123,15 +128,13 @@ setTimeout(function () {
 }, 2000);
 
 var instructions = [
-  "character milady1 MiladySmiling",
-  "sleep 2000",
-  "go milady1 0,3",
+  "character milady1 Milady",
+  "sleep 500",
+  "go milady1 0,2",
   "sleep 2000",
   "say milady1 hello",
   "sleep 2000",
-  "go milady1 0,5",
-  "sleep 2000",
-  "say milady1 goodbye",
-  "sleep 2000",
-  "go milady1 0,0",
+  "do milady1 Dancing2",
+  "sleep 4000",
+  "go milady1 0,-4",
 ];

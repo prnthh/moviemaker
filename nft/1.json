@@ -1,0 +1,22 @@
+{
+  "platform": "Generative Dungeon",
+  "name": "NFT #1",
+  "background_color": "000000",
+  "curation_status": "curated",
+  "series": "1",
+  "description": "Artwork you can play!",
+  "external_url": "https://viewer.generativedungeon.com/1",
+  "collection_name": "NFT",
+  "attributes": [
+    {
+      "trait_type": "Video",
+      "value": "1080p"
+    }
+  ],
+  "animation_url": "https://viewer.generativedungeon.com/1",
+  "image": "https://images.generativedungeon.com/1",
+  "interactive_nft": {
+    "code_uri": "https://viewer.generativedungeon.com/1",
+    "version": "1.0"
+  }
+}

@@ -53,17 +53,21 @@ function drawCharacter(name, scene, modelToLoad = "Milady") {
     });
 
     const animLoader = new THREE.FBXLoader();
-    const animsToLoad = ["Sitting.fbx", "Kicking.fbx"]; // Add animation filenames here
+    const animsToLoad = ["Walk", "Talk", "SillyDancing", "Dancing2"]; // Add animation filenames here
 
     const mixer = new THREE.AnimationMixer(fbx);
-    const animations = [];
+    const animations = {};
 
     animsToLoad.forEach((animFile) => {
       animLoader.setPath(assetPath + modelToLoad + "/anims/");
-      animLoader.load(animFile, (anim) => {
-        const action = mixer.clipAction(anim.animations[0]);
-        animations.push(action);
-      });
+      try {
+        animLoader.load(animFile + ".fbx", (anim) => {
+          const action = mixer.clipAction(anim.animations[0]);
+          animations[animFile] = action;
+        });
+      } catch (e) {
+        console.log(e);
+      }
     });
 
     fbx.position.y = -6;
@@ -74,6 +78,7 @@ function drawCharacter(name, scene, modelToLoad = "Milady") {
       group: group,
       mixer: mixer,
       animations: animations,
+      currentAnimation: null, // Add this line
     };
   });
 }
@@ -81,7 +86,7 @@ function drawCharacter(name, scene, modelToLoad = "Milady") {
 function drawText(message = "Milady\nWorld Order", position) {
   const loader = new THREE.FontLoader();
   loader.load("fonts/helvetiker_regular.typeface.json", function (font) {
-    const color = 0x006699;
+    const color = 0xebff38;
 
     const matDark = new THREE.LineBasicMaterial({
       color: color,
@@ -109,7 +114,7 @@ function drawText(message = "Milady\nWorld Order", position) {
     // make shape ( N.B. edge view not visible )
 
     const text = new THREE.Mesh(geometry, matLite);
-    text.position.z = -1;
+    text.position.z = position.z;
     text.position.y = 3;
     scene.add(text);
 
@@ -155,24 +160,34 @@ function drawText(message = "Milady\nWorld Order", position) {
   }); //end load function
 }
 
-function switchAnimation(characterName, animIndex) {
+function switchAnimation(characterName, animName, fadeDuration = 0.5) {
   const character = characters[characterName];
   if (!character) {
     console.error(`Character ${characterName} not found.`);
     return;
   }
 
-  character.animations.forEach((anim) => {
-    anim.stop();
-  });
-
-  const animation = character.animations[animIndex];
+  const animation = character.animations[animName];
   if (!animation) {
-    console.error(`Animation index ${animIndex} not found.`);
+    console.error(`Animation name ${animName} not found for ${characterName}.`);
     return;
   }
 
-  animation.play();
+  // If the target animation isn't already playing, crossfade to it
+  if (character.currentAnimation !== animation) {
+    if (character.currentAnimation) {
+      const prevAnim = character.currentAnimation;
+      animation.play();
+      character.currentAnimation.crossFadeTo(animation, fadeDuration, false);
+      setTimeout(() => {
+        prevAnim.stop();
+      }, fadeDuration * 1000);
+    } else {
+      animation.play();
+    }
+
+    characters[characterName].currentAnimation = animation;
+  }
 }
 
 function printToLogs(text) {
