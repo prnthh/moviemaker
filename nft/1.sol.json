@@ -1,0 +1,26 @@
+{
+  "name": "Toonies #1428",
+  "symbol": "TOONIES",
+  "description": "Toonies is bringing the digital and physical worlds together with a cast of distinct characters and new ways to experience your art.",
+  "image": "https://nftstorage.link/ipfs/bafybeihab27frjk4odksjonmzusvreh4bzgfnt7jpeavbfslxwuixsedve/1427.gif",
+  "external_url": "https://www.toonies.art/",
+  "animation_url": "https://nftstorage.link/ipfs/bafybeiexvvjr76hjjg4ai23zyw7wtxc3ypzqldy4n7pobygapfmf2qfowi?filename=1427.glb",
+  "attributes": [
+    { "trait_type": "Character", "value": "Heart" },
+    { "trait_type": "Color", "value": "OG" },
+    { "trait_type": "Rarity", "value": "Common" }
+  ],
+  "properties": {
+    "files": [
+      {
+        "uri": "https://nftstorage.link/ipfs/bafybeihab27frjk4odksjonmzusvreh4bzgfnt7jpeavbfslxwuixsedve/1427.gif",
+        "type": "image/gif"
+      },
+      {
+        "uri": "https://nftstorage.link/ipfs/bafybeiexvvjr76hjjg4ai23zyw7wtxc3ypzqldy4n7pobygapfmf2qfowi?filename=1427.glb",
+        "type": "model/gltf-binary"
+      }
+    ],
+    "category": "vr"
+  }
+}
