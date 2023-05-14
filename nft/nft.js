@@ -3,13 +3,16 @@ const cameraDistance = 3;
 const offsetRange = 7;
 const targetHeight = 1.5;
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(
+var mixer;
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
   0.25,
   100
 );
+
+var clock = new THREE.Clock();
 
 let mouseX = 0,
   mouseY = 0;
@@ -23,12 +26,26 @@ var renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(window.innerWidth - 4, window.innerHeight - 4);
 
-const loader = new THREE.FBXLoader();
+const loader = new THREE.GLTFLoader();
 loader.load(
-  "./nftmodel.fbx",
-  (fbx) => {
-    fbx.scale.setScalar(0.01);
-    scene.add(fbx);
+  "./nftmodel.gltf",
+  // "https://prnth.com/moviemaker/nft/nftmodel.gltf",
+
+  (gltf) => {
+    model = gltf.scene;
+    mixer = new THREE.AnimationMixer(model);
+    gltf.animations.forEach((clip) => {
+      mixer.clipAction(clip).play();
+    });
+
+    scene.add(model);
+
+    model.traverse((o) => {
+      if (o.isMesh) {
+        o.castShadow = true;
+        o.receiveShadow = true;
+      }
+    });
   },
   undefined,
   function (error) {
@@ -39,8 +56,17 @@ loader.load(
 camera.position.z = cameraDistance;
 camera.position.y = cameraHeight;
 
-const light = new THREE.AmbientLight(0x404040, 4); // soft white light
+const light = new THREE.AmbientLight(0x404040, 1); // soft white light
 scene.add(light);
+
+// const spotLight = new THREE.SpotLight(0xcf5eff);
+// spotLight.intensity = 0.5;
+// spotLight.position.set(0, 5, 4);
+// // spotLight.angle = Math.PI / 6;
+
+// // spotLight.map = new THREE.TextureLoader().load(url);
+// spotLight.castShadow = true;
+// scene.add(spotLight);
 
 document.addEventListener("mousemove", onDocumentMouseMove, false);
 window.addEventListener("resize", onWindowResize, false);
@@ -69,6 +95,11 @@ function animate() {
   var target = new THREE.Vector3(0, targetHeight, 0);
   camera.lookAt(target);
 
+  var delta = clock.getDelta();
+
+  if (mixer) mixer.update(delta);
+
   renderer.render(scene, camera);
 }
+
 animate();
