@@ -28,7 +28,7 @@ renderer.setSize(window.innerWidth - 4, window.innerHeight - 4);
 
 const loader = new THREE.GLTFLoader();
 loader.load(
-  "./nftmodel-sol.gltf",
+  "https://prnth.com/moviemaker/nft/willsolanamakeit/4/nftmodel-sol.gltf",
   // "https://prnth.com/moviemaker/nft/nftmodel.gltf",
 
   (gltf) => {
