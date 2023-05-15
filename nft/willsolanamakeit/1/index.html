@@ -7,22 +7,57 @@
       name="viewport"
       content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
-    <meta http-equiv="Content-Security-Policy" content="default-src * self blob: data: gap:; style-src * self 'unsafe-inline' blob: data: gap:; script-src * 'self' 'unsafe-eval' 'unsafe-inline' blob: data: gap:; object-src * 'self' blob: data: gap:; img-src * self 'unsafe-inline' blob: data: gap:; connect-src self * 'unsafe-inline' blob: data: gap:; frame-src * self blob: data: gap:;">
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src * self blob: data: gap:; style-src * self 'unsafe-inline' blob: data: gap:; script-src * 'self' 'unsafe-eval' 'unsafe-inline' blob: data: gap:; object-src * 'self' blob: data: gap:; img-src * self 'unsafe-inline' blob: data: gap:; connect-src self * 'unsafe-inline' blob: data: gap:; frame-src * self blob: data: gap:;"
+    />
     <script src="https://cdn.bootcdn.net/ajax/libs/three.js/r128/three.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.122.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fflate@0.7.4/umd/index.min.js"></script>
     <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/20.0.0/tween.umd.js"></script>    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/20.0.0/tween.umd.js"></script>
   </head>
 
-  <body style="margin: 0px; text-align: center; background-color: black">
+  <body
+    id="audio-button"
+    style="margin: 0px; text-align: center; background-color: black"
+  >
     <canvas style="width: 100%; height: 100vh" id="threeCanvas">
       loading...
     </canvas>
-    </div>
+    <audio
+      id="audio-element"
+      src="https://prnth.com/moviemaker/nft/willsolanamakeit/1/MyNounSound (1).mp3"
+      loop
+    ></audio>
+    <!-- <script src="https://prnth.com/moviemaker/nft/willsolanamakeit/1/nft.js"></script>     -->
+    <script src="./nft.js"></script>
+    <script>
+      window.addEventListener("DOMContentLoaded", (event) => {
+        const audioElement = document.getElementById("audio-element");
+        const button = document.getElementById("audio-button");
 
-    <!-- <script src="https://prnth.com/moviemaker/nft/nftisolated.js"></script> -->
-    <script src="https://prnth.com/moviemaker/nft/willsolanamakeit/1/nft.js"></script>    
+        // Try to autoplay audio
+        const playPromise = audioElement.play();
+        if (playPromise !== undefined) {
+          playPromise
+            .then((_) => {
+              // Autoplay started
+            })
+            .catch((error) => {
+              // Autoplay was prevented, user will need to start the playback manually
+            });
+        }
+
+        button.addEventListener("click", function () {
+          if (audioElement.paused) {
+            audioElement.play();
+          } else {
+            audioElement.pause();
+          }
+        });
+      });
+    </script>
   </body>
 </html>
