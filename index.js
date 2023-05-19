@@ -13,25 +13,25 @@ var renderer = new THREE.WebGLRenderer({
   canvas: myCanvas,
 });
 renderer.setSize(window.innerWidth - 4, window.innerHeight - 4);
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.shadowMap.enabled = true;
+renderer.setClearColor(0xffffff, 0);
 
 const controls = new THREE.OrbitControls(camera, myCanvas);
-// const geometry = new THREE.BoxGeometry();
-// const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-// const cube = new THREE.Mesh(geometry, material);
-// scene.add(cube);
 
 // add a 3d grid to the background
-
-const group = drawCubeWalls();
-scene.add(group);
+// const group = drawCubeWalls();
+// scene.add(group);
 
 var characters = {};
+var objects = {};
 var mixers = [];
 var clock = new THREE.Clock();
 
-camera.position.z = 15;
-const light = new THREE.AmbientLight(0x404040, 5); // soft white light
-scene.add(light);
+camera.position.set(0, 2, 30);
+// camera.rotation.x = -0.5;
+
+addLighting();
 
 function animate() {
   requestAnimationFrame(animate);
@@ -46,6 +46,8 @@ function animate() {
   renderer.render(scene, camera);
 }
 animate();
+
+drawObject("room", scene);
 
 function addToQueue() {
   var instruction = document.getElementById("instruction").value;
@@ -87,7 +89,7 @@ function processInstruction() {
       var x = parseInt(args[0]);
       var z = parseInt(args[1]);
 
-      var duration = 2000;
+      var duration = parts[3] || 2000;
 
       radians = Math.atan2(x - character.position.x, z - character.position.z);
       new TWEEN.Tween(character.rotation).to({ y: radians }, 600).start();
@@ -130,11 +132,24 @@ setTimeout(function () {
 var instructions = [
   "character milady1 Milady",
   "sleep 500",
-  "go milady1 0,2",
-  "sleep 2000",
+  "go milady1 0,4 800",
+  "sleep 800",
   "say milady1 hello",
   "sleep 2000",
   "do milady1 Dancing2",
   "sleep 4000",
-  "go milady1 0,-4",
+  // "go milady1 0,-4",
+  "say milady1 if you know what im saying",
 ];
+
+function addLighting() {
+  const light = new THREE.AmbientLight(0x404040, 2); // soft white light
+  scene.add(light);
+
+  drawLight(
+    new THREE.Vector3(10, 5, 15),
+    new THREE.Euler(-Math.PI / 10, Math.PI / 6, 0),
+    0.1,
+    scene
+  );
+}

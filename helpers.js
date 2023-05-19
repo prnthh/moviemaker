@@ -40,6 +40,66 @@ function drawCubeWalls() {
   return plane;
 }
 
+function drawObject(name, scene) {
+  var loader = new THREE.GLTFLoader();
+
+  loader.load(
+    "./pocketmilady/room2.glb",
+    function (gltf) {
+      model = gltf.scene;
+
+      model.traverse(function (node) {
+        if (node.isMesh) {
+          node.castShadow = true;
+          node.receiveShadow = true;
+        }
+      });
+
+      let fileAnimations = gltf.animations;
+
+      model.scale.set(5, 5, 5);
+      model.position.y = -6.2;
+      model.receiveShadow = true;
+      model.castShadow = true;
+      scene.add(model);
+
+      loaderAnim.remove();
+
+      mixer = new THREE.AnimationMixer(model);
+
+      let clips = fileAnimations.filter((val) => val.name !== "idle");
+      possibleAnims = clips.map((val) => {
+        let clip = THREE.AnimationClip.findByName(clips, val.name);
+
+        clip.tracks.splice(3, 3);
+        clip.tracks.splice(9, 3);
+
+        clip = mixer.clipAction(clip);
+        return clip;
+      });
+
+      let idleAnim = THREE.AnimationClip.findByName(fileAnimations, "idle");
+
+      idleAnim.tracks.splice(3, 3);
+      idleAnim.tracks.splice(9, 3);
+
+      idle = mixer.clipAction(idleAnim);
+      idle.play();
+
+      objects[name] = {
+        model: model,
+        mixer: mixer,
+        animations: animations,
+        currentAnimation: null, // Add this line
+      };
+    },
+    undefined, // We don't need this function
+    function (error) {
+      console.error(error);
+    }
+  );
+}
+
 const assetPath = "./assets/models/";
 function drawCharacter(name, scene, modelToLoad = "Milady") {
   const group = new THREE.Group();
@@ -50,6 +110,8 @@ function drawCharacter(name, scene, modelToLoad = "Milady") {
     fbx.scale.setScalar(0.05);
     fbx.traverse((c) => {
       c.castShadow = true;
+      c.receiveShadow = true;
+      if (c.material) c.material.shininess = 5;
     });
 
     const animLoader = new THREE.FBXLoader();
@@ -188,6 +250,22 @@ function switchAnimation(characterName, animName, fadeDuration = 0.5) {
 
     characters[characterName].currentAnimation = animation;
   }
+}
+
+function drawLight(position, rotation, intensity, scene) {
+  const light = new THREE.DirectionalLight("lightyellow", intensity);
+  light.castShadow = true;
+  light.position.copy(position);
+  light.rotation.copy(rotation);
+  scene.add(light);
+
+  // add a box at light2
+  const geometry = new THREE.BoxGeometry(1, 2, 3);
+  const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+  const cube = new THREE.Mesh(geometry, material);
+  cube.position.copy(position);
+  cube.rotation.copy(rotation);
+  scene.add(cube);
 }
 
 function printToLogs(text) {
