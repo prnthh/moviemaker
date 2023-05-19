@@ -111,7 +111,7 @@ function drawCharacter(name, scene, modelToLoad = "Milady") {
     fbx.traverse((c) => {
       c.castShadow = true;
       c.receiveShadow = true;
-      if (c.material) c.material.shininess = 5;
+      if (c.material) c.material.shininess = 0;
     });
 
     const animLoader = new THREE.FBXLoader();
@@ -145,7 +145,11 @@ function drawCharacter(name, scene, modelToLoad = "Milady") {
   });
 }
 
-function drawText(message = "Milady\nWorld Order", position) {
+function drawText(
+  message = "Milady\nWorld Order",
+  position,
+  maxDuration = 2000
+) {
   const loader = new THREE.FontLoader();
   loader.load("fonts/helvetiker_regular.typeface.json", function (font) {
     const color = 0xebff38;
@@ -177,13 +181,14 @@ function drawText(message = "Milady\nWorld Order", position) {
 
     const text = new THREE.Mesh(geometry, matLite);
     text.position.z = position.z;
-    text.position.y = 3;
+    text.position.x = position.x;
+    text.position.y = 2.2;
     scene.add(text);
 
     // destroy in two seconds
     setTimeout(() => {
       scene.remove(text);
-    }, 2000);
+    }, maxDuration);
 
     // make line shape ( N.B. edge view remains visible )
 
@@ -279,20 +284,15 @@ function processTextbox(e) {
   }
 }
 
-function generateInstruction() {
-  // var randomChoice = Math.floor(Math.random() * 2);
-  // switch (randomChoice) {
-  //   case 0:
-  //     var x = Math.random() * 8 - 4;
-  //     var z = Math.random() * 8 - 4;
-  //     instructions.push("go " + x + "," + z);
-  //     break;
-  //   case 1:
-  //     instructions.push(
-  //       "say " + words[Math.floor(Math.random() * words.length)]
-  //     );
-  //     break;
-  // }
+function generateInstructions() {
+  const string =
+    "go milady1 1,4 2000; sleep 2000; go milady1 1,0; sleep 2000; go milady1 -3,5 1800; sleep 2000; say milady1 800 Ole!; do milady1 Dancing2; sleep 100";
+  instructions = [...string.split(";")];
+  instructions = instructions.map((instruction) => {
+    return instruction.trim();
+  });
+
+  return instructions;
 }
 
 const words = ["feds are coming bro", "omg hiii", "i love you", "i hate you"];

@@ -1,18 +1,24 @@
+var sceneWidth = window.innerWidth;
+var sceneHeight = sceneWidth / 1.15; // window.innerHeight;
+
 var infinite = true;
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
   75,
-  window.innerWidth / window.innerHeight,
+  sceneWidth / sceneHeight,
   0.25,
   100
 );
+camera.position.set(0, 0, 19);
 
 var myCanvas = document.getElementById("threeCanvas");
 var renderer = new THREE.WebGLRenderer({
   antialias: true,
   canvas: myCanvas,
 });
-renderer.setSize(window.innerWidth - 4, window.innerHeight - 4);
+renderer.setSize(sceneWidth, sceneHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
+// renderer.setSize(window.innerWidth - 4, window.innerHeight - 4);
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.shadowMap.enabled = true;
 renderer.setClearColor(0xffffff, 0);
@@ -28,7 +34,6 @@ var objects = {};
 var mixers = [];
 var clock = new THREE.Clock();
 
-camera.position.set(0, 2, 30);
 // camera.rotation.x = -0.5;
 
 addLighting();
@@ -61,7 +66,7 @@ function addToQueue() {
 
 function processInstruction() {
   if (instructions.length === 0) {
-    // sleep the REPL for 1 second
+    instructions = [...generateInstructions()];
     setTimeout(function () {
       processInstruction();
     }, 1000);
@@ -101,9 +106,10 @@ function processInstruction() {
       break;
     case "say":
       var name = parts[1];
+      var duration = parts[2];
       var character = characters[name].group;
       switchAnimation(name, "Talk");
-      drawText(parts.slice(2).join(" "), character.position);
+      drawText(parts.slice(3).join(" "), character.position, duration);
       break;
     case "sleep":
       var duration = parseInt(parts[1]);
@@ -118,7 +124,7 @@ function processInstruction() {
       switchAnimation(name, animation);
       break;
     default:
-      processInstruction();
+      break;
   }
   setTimeout(function () {
     processInstruction();
@@ -132,14 +138,12 @@ setTimeout(function () {
 var instructions = [
   "character milady1 Milady",
   "sleep 500",
-  "go milady1 0,4 800",
+  "go milady1 0,15 2200",
+  "sleep 2200",
+  "say milady1 800 hi there",
   "sleep 800",
-  "say milady1 hello",
-  "sleep 2000",
-  "do milady1 Dancing2",
-  "sleep 4000",
-  // "go milady1 0,-4",
-  "say milady1 if you know what im saying",
+  "say milady1 2000 my name is milady",
+  // "sleep 800",
 ];
 
 function addLighting() {
@@ -149,7 +153,7 @@ function addLighting() {
   drawLight(
     new THREE.Vector3(10, 5, 15),
     new THREE.Euler(-Math.PI / 10, Math.PI / 6, 0),
-    0.1,
+    0.3,
     scene
   );
 }
