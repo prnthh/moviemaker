@@ -44,7 +44,7 @@ function drawObject(name, scene) {
   var loader = new THREE.GLTFLoader();
 
   loader.load(
-    "./pocketmilady/room2.glb",
+    "./pocketmilady/horroom.glb",
     function (gltf) {
       model = gltf.scene;
 
@@ -115,8 +115,6 @@ function drawCharacter(name, scene, modelToLoad = "Milady") {
     });
 
     const animLoader = new THREE.FBXLoader();
-    const animsToLoad = ["Walk", "Talk", "SillyDancing", "Dancing2"]; // Add animation filenames here
-
     const mixer = new THREE.AnimationMixer(fbx);
     const animations = {};
 
@@ -258,12 +256,14 @@ function switchAnimation(characterName, animName, fadeDuration = 0.5) {
 }
 
 function drawLight(position, rotation, intensity, scene) {
-  const light = new THREE.DirectionalLight("lightyellow", intensity);
+  // const light = new THREE.DirectionalLight("lightyellow", intensity);
+  const light = new THREE.PointLight("lightyellow", intensity);
   light.castShadow = true;
   light.position.copy(position);
   light.rotation.copy(rotation);
   scene.add(light);
 
+  return;
   // add a box at light2
   const geometry = new THREE.BoxGeometry(1, 2, 3);
   const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
@@ -286,7 +286,7 @@ function processTextbox(e) {
 
 function generateInstructions() {
   const string =
-    "go milady1 1,4 2000; sleep 2000; go milady1 1,0; sleep 2000; go milady1 -3,5 1800; sleep 2000; say milady1 800 Ole!; do milady1 Dancing2; sleep 100";
+    "sleep 2000; do milady1 LookAround; sleep 9500; do milady1 HipDance; sleep 8500; do milady1 HipDance2; sleep 8000;";
   instructions = [...string.split(";")];
   instructions = instructions.map((instruction) => {
     return instruction.trim();
@@ -296,3 +296,19 @@ function generateInstructions() {
 }
 
 const words = ["feds are coming bro", "omg hiii", "i love you", "i hate you"];
+
+const animsToLoad = [
+  "Walk",
+  "Talk",
+  "SillyDancing",
+  "Dancing2",
+  "Idle",
+  "DJ",
+  "HeadNod",
+  "LookAround",
+  "Opening",
+  "Taunt",
+  "Waving",
+  "HipDance",
+  "HipDance2",
+]; // Add animation filenames here

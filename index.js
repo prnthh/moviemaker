@@ -4,7 +4,7 @@ var sceneHeight = sceneWidth / 1.15; // window.innerHeight;
 var infinite = true;
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
-  75,
+  100,
   sceneWidth / sceneHeight,
   0.25,
   100
@@ -136,24 +136,35 @@ setTimeout(function () {
 }, 2000);
 
 var instructions = [
-  "character milady1 Milady",
+  "character milady1 MiladySmiling",
   "sleep 500",
-  "go milady1 0,15 2200",
-  "sleep 2200",
-  "say milady1 800 hi there",
+  "go milady1 3,-2 100",
+  "sleep 5000",
+  "go milady1 3,2 1200",
+  "sleep 1200",
+  "go milady1 0,5 1000",
+  "sleep 1000",
+  "go milady1 0,8 800",
   "sleep 800",
-  "say milady1 2000 my name is milady",
+  "say milady1 800 hi there",
+  "do milady1 Waving",
+  "sleep 900",
+  "say milady1 2000 brg forever <3",
+  "do milady1 Idle",
+  "sleep 2000",
+  "do milady1 Opening",
+  "sleep 700; ",
   // "sleep 800",
 ];
 
 function addLighting() {
-  const light = new THREE.AmbientLight(0x404040, 2); // soft white light
+  const light = new THREE.AmbientLight(0x404040, 1); // soft white light
   scene.add(light);
 
   drawLight(
-    new THREE.Vector3(10, 5, 15),
-    new THREE.Euler(-Math.PI / 10, Math.PI / 6, 0),
-    0.3,
+    new THREE.Vector3(-4, 2, 7),
+    new THREE.Euler(-Math.PI / 10, -Math.PI / 2, 0),
+    0.5,
     scene
   );
 }
