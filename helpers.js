@@ -24,6 +24,7 @@ export function drawObject(name, scene) {
       model.position.y = -6.2;
       model.receiveShadow = true;
       model.castShadow = true;
+      model.rotation.y = Math.PI / 4;
       scene.add(model);
 
       loaderAnim.remove();
@@ -178,6 +179,28 @@ export function switchAnimation(character, animName, fadeDuration = 0.5) {
   }
 }
 
+export function rotateToFace(objectToRotate, x, z, duration = 600) {
+  var radians = Math.atan2(
+    x - objectToRotate.position.x,
+    z - objectToRotate.position.z
+  );
+
+  // normalize current rotation to the range -PI to PI
+  while (objectToRotate.rotation.y > Math.PI)
+    objectToRotate.rotation.y -= 2 * Math.PI;
+  while (objectToRotate.rotation.y <= -Math.PI)
+    objectToRotate.rotation.y += 2 * Math.PI;
+
+  // determine the shortest direction to the target angle
+  var delta = radians - objectToRotate.rotation.y;
+  if (delta > Math.PI) delta -= 2 * Math.PI;
+  if (delta < -Math.PI) delta += 2 * Math.PI;
+
+  new TWEEN.Tween(objectToRotate.rotation)
+    .to({ y: objectToRotate.rotation.y + delta }, Math.min(600, duration))
+    .start();
+}
+
 export function drawLight(position, rotation, intensity, scene) {
   // const light = new THREE.DirectionalLight("lightyellow", intensity);
   const light = new THREE.PointLight("lightyellow", intensity);
@@ -197,9 +220,10 @@ export function drawLight(position, rotation, intensity, scene) {
 }
 
 export function printToLogs(text) {
-  const logs = document.getElementById("log");
-  logs.innerHTML += `<div> #! ${text}</div>`;
-  logs.scrollTop = logs.scrollHeight;
+  console.log(text);
+  // const logs = document.getElementById("log");
+  // logs.innerHTML += `<div> #! ${text}</div>`;
+  // logs.scrollTop = logs.scrollHeight;
 }
 export function processTextbox(e) {
   if (e.key == "Enter") {
@@ -207,15 +231,45 @@ export function processTextbox(e) {
   }
 }
 
-export function generateInstructions(instructions) {
-  const string =
-    "sleep 2000; say milady1 2000 dude; do milady1 Sad; sleep 9500; do milady1 Happy; sleep 8500; do milady1 Yes; sleep 8000;";
-  instructions = [...string.split(";")];
-  instructions = instructions.map((instruction) => {
-    return instruction.trim();
-  });
+export function generateInstructions(characters) {
+  // generate random xy coordinate
+  const x = Math.floor((-0.5 + Math.random()) * 10);
+  const y = Math.floor(-0.5 + Math.random() * 10);
+
+  const currentPos = characters["milady1"].group.position;
+  const distance = Math.sqrt((currentPos.x - x) ** 2 + (currentPos.z - y) ** 2);
+  const duration = distance * 250;
+
+  const instructions = [
+    `go milady1 ${x + "," + y} ${duration}`,
+    `sleep ${duration}`,
+    `do milady1 Idle`,
+    `sleep 2000`,
+    `say milady1 2000 ${words[Math.floor(Math.random() * words.length)]}`,
+    `sleep 3000`,
+  ];
 
   return instructions;
+}
+
+export function sayHello() {
+  return [
+    "go milady1 0,5 2000",
+    "sleep 2000",
+    "go milady1 0,8 1000",
+    "sleep 1000",
+    "say milady1 2000 dude",
+    "sleep 3000",
+  ];
+}
+
+export function usePC(instructions) {
+  return [
+    "go milady1 2,2 2000",
+    "sleep 2000",
+    "say milady1 2000 dude23",
+    "sleep 3000",
+  ];
 }
 
 const words = ["feds are coming bro", "omg hiii", "i love you", "i hate you"];

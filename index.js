@@ -5,6 +5,8 @@ import {
   drawText,
   generateInstructions,
   printToLogs,
+  rotateToFace,
+  sayHello,
   switchAnimation,
 } from "./helpers.js";
 
@@ -26,10 +28,11 @@ init();
 animate();
 initInstructions();
 processInstruction();
-var aspectRatio = window.innerWidth / window.innerHeight;
+var aspectRatio;
 
 function init() {
-  var sceneWidth = window.innerWidth;
+  var myCanvas = document.getElementById("threeCanvas");
+  var sceneWidth = myCanvas.offsetWidth; // window.innerWidth;
   var sceneHeight = Math.min(sceneWidth / 1.15, window.innerHeight);
   aspectRatio = sceneWidth / sceneHeight;
   camera = new THREE.OrthographicCamera(
@@ -40,17 +43,15 @@ function init() {
     -10,
     100
   );
-  camera.position.y = 2 * Math.tan(Math.PI / 6);
-  camera.position.z = 2;
-  camera.position.x = -2;
+  camera.position.y = 1 * Math.tan(Math.PI / 6);
+  camera.position.z = 1;
   camera.zoom = 0.1;
 
   scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xf1f1f1);
+  scene.background = new THREE.Color(0x000000);
 
   clock = new THREE.Clock();
 
-  var myCanvas = document.getElementById("threeCanvas");
   renderer = new THREE.WebGLRenderer({
     antialias: true,
     canvas: myCanvas,
@@ -60,7 +61,6 @@ function init() {
   renderer.outputEncoding = THREE.sRGBEncoding;
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setClearColor(0xffffff, 0);
-  document.body.appendChild(renderer.domElement);
 
   composer = new EffectComposer(renderer);
   const renderPixelatedPass = new RenderPixelatedPass(6, scene, camera);
@@ -77,28 +77,26 @@ function init() {
   // gui
 
   gui = new GUI();
-  // params = {
-  //   pixelSize: 6,
-  //   normalEdgeStrength: 0.3,
-  //   depthEdgeStrength: 0.4,
-  //   pixelAlignedPanning: true,
-  // };
-  // gui
-  //   .add(params, "pixelSize")
-  //   .min(1)
-  //   .max(16)
-  //   .step(1)
-  //   .onChange(() => {
-  //     renderPixelatedPass.setPixelSize(params.pixelSize);
-  //   });
+  params = {
+    pixelSize: 6,
+    // normalEdgeStrength: 0.3,
+    // depthEdgeStrength: 0.4,
+    // pixelAlignedPanning: true,
+  };
+  gui
+    .add(params, "pixelSize")
+    .min(1)
+    .max(16)
+    .step(1)
+    .onChange(() => {
+      renderPixelatedPass.setPixelSize(params.pixelSize);
+    });
   // gui.add(renderPixelatedPass, "normalEdgeStrength").min(0).max(2).step(0.05);
   // gui.add(renderPixelatedPass, "depthEdgeStrength").min(0).max(1).step(0.05);
   const instructionControls = {
     "Say Hello": () => {
-      instructions = [
-        "say milady1 2000 stop asking me to say hello",
-        "sleep 2000",
-      ];
+      instructions = sayHello();
+      console.log("instructions are ", instructions);
       // instructions.push("say hello");
     },
   };
@@ -106,7 +104,8 @@ function init() {
 }
 
 function onWindowResize() {
-  var sceneWidth = window.innerWidth;
+  var myCanvas = document.getElementById("threeCanvas");
+  var sceneWidth = myCanvas.offsetWidth;
   var sceneHeight = Math.min(sceneWidth / 1.15, window.innerHeight);
   aspectRatio = sceneWidth / sceneHeight;
 
@@ -150,7 +149,7 @@ function addToQueue() {
 
 function processInstruction() {
   if (instructions.length === 0) {
-    instructions = [...generateInstructions(instructions)];
+    instructions = [...generateInstructions(characters)];
     setTimeout(function () {
       processInstruction();
     }, 1000);
@@ -181,16 +180,12 @@ function processInstruction() {
 
       var duration = parts[3] || 2000;
 
-      var radians = Math.atan2(
-        x - character.group.position.x,
-        z - character.group.position.z
-      );
-      new TWEEN.Tween(character.group.rotation).to({ y: radians }, 600).start();
-
+      rotateToFace(character.group, x, z, duration);
       new TWEEN.Tween(character.group.position)
         .to({ x: x, z: z }, duration)
         .easing(TWEEN.Easing.Linear.None)
         .start();
+
       break;
     case "say":
       var name = parts[1];
@@ -205,12 +200,6 @@ function processInstruction() {
         duration
       );
       break;
-    case "sleep":
-      var duration = parseInt(parts[1]);
-      setTimeout(function () {
-        processInstruction();
-      }, duration);
-      return;
     case "do":
       var name = parts[1];
       var animation = parts[2];
@@ -218,12 +207,15 @@ function processInstruction() {
       if (character === undefined) break;
       switchAnimation(character, animation);
       break;
+    case "sleep":
+      duration = parseInt(parts[1]);
+      break;
     default:
       break;
   }
   setTimeout(function () {
     processInstruction();
-  }, 0);
+  }, duration);
 }
 
 setTimeout(function () {
@@ -234,16 +226,13 @@ function initInstructions() {
   instructions = [
     "character milady1 MiladyShort",
     "sleep 500",
-    "go milady1 0,5 1000",
-    "sleep 1000",
-    "go milady1 0,8 800",
-    "sleep 800",
+    "go milady1 0,8 1500",
+    "sleep 1500",
     "say milady1 800 hi there",
-    "sleep 1200",
-    "say milady1 2000 brg forever <3",
+    "sleep 2000",
+    "say milady1 2000 nice to see you again",
     "do milady1 Yes",
     "sleep 2000",
-    // "sleep 800",
   ];
 }
 
