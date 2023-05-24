@@ -4,6 +4,7 @@ import {
   drawObject,
   drawText,
   generateInstructions,
+  goToBed,
   printToLogs,
   rotateToFace,
   sayHello,
@@ -27,7 +28,6 @@ var instructions = [];
 init();
 animate();
 initInstructions();
-processInstruction();
 var aspectRatio;
 
 function init() {
@@ -78,11 +78,13 @@ function init() {
 
   gui = new GUI();
   params = {
-    pixelSize: 6,
+    pixelSize: 4,
     // normalEdgeStrength: 0.3,
     // depthEdgeStrength: 0.4,
     // pixelAlignedPanning: true,
   };
+  renderPixelatedPass.setPixelSize(params.pixelSize);
+
   gui
     .add(params, "pixelSize")
     .min(1)
@@ -99,8 +101,12 @@ function init() {
       console.log("instructions are ", instructions);
       // instructions.push("say hello");
     },
+    "Go To Sleep": () => {
+      instructions = goToBed(characters);
+    },
   };
   gui.add(instructionControls, "Say Hello");
+  gui.add(instructionControls, "Go To Sleep");
 }
 
 function onWindowResize() {
@@ -160,13 +166,13 @@ function processInstruction() {
 
   var parts = instruction.split(" ");
   var command = parts[0];
+  var duration = 0;
 
   switch (command) {
     case "character":
       var name = parts[1];
       var model = parts[2];
       drawCharacter(characters, name, scene, model);
-
       break;
     case "go":
       var name = parts[1];
@@ -175,40 +181,68 @@ function processInstruction() {
       switchAnimation(character, "Walk");
 
       var args = parts[2].split(",");
-      var x = parseInt(args[0]);
-      var z = parseInt(args[1]);
+      var x = parseFloat(args[0]);
+      var z = parseFloat(args[1]);
 
-      var duration = parts[3] || 2000;
+      var actionDuration = parts[3] || 2000;
 
-      rotateToFace(character.group, x, z, duration);
+      rotateToFace(character.group, x, z, actionDuration);
       new TWEEN.Tween(character.group.position)
-        .to({ x: x, z: z }, duration)
+        .to({ x: x, z: z }, actionDuration)
         .easing(TWEEN.Easing.Linear.None)
         .start();
 
       break;
     case "say":
       var name = parts[1];
-      var duration = parts[2];
+      var actionDuration = parts[2];
       var character = characters[name];
       if (character === undefined) break;
-      switchAnimation(character, "Talk");
       drawText(
         scene,
         parts.slice(3).join(" "),
         character.group.position,
-        duration
+        actionDuration
       );
+      break;
+    case "move":
+      var name = parts[1];
+      var character = characters[name];
+      if (character === undefined) break;
+      var args = parts[2].split(",");
+      var x = parseFloat(args[0]);
+      var z = parseFloat(args[1]);
+
+      var actionDuration = parts[3] || 2000;
+
+      new TWEEN.Tween(character.group.position)
+        .to({ x: x, z: z }, actionDuration)
+        .easing(TWEEN.Easing.Linear.None)
+        .start();
+      break;
+    case "lookat":
+      var name = parts[1];
+      var character = characters[name];
+      if (character === undefined) break;
+
+      var args = parts[2].split(",");
+      var x = parseFloat(args[0]);
+      var z = parseFloat(args[1]);
+
+      var actionDuration = parts[3] || 2000;
+      rotateToFace(character.group, x, z, actionDuration);
       break;
     case "do":
       var name = parts[1];
       var animation = parts[2];
+      var once = parts[3];
       var character = characters[name];
       if (character === undefined) break;
-      switchAnimation(character, animation);
+      switchAnimation(character, animation, undefined, once === "once");
       break;
     case "sleep":
       duration = parseInt(parts[1]);
+      console.log("sleeping for ", duration);
       break;
     default:
       break;

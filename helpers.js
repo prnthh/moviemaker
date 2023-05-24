@@ -155,7 +155,13 @@ export function drawText(
   }); //end load function
 }
 
-export function switchAnimation(character, animName, fadeDuration = 0.5) {
+export function switchAnimation(
+  character,
+  animName,
+  fadeDuration = 0.5,
+  once = false,
+  reverse = false
+) {
   const animation = character.animations[animName];
   if (!animation) {
     console.error(`Animation name ${animName} not found for ${character}.`);
@@ -167,6 +173,13 @@ export function switchAnimation(character, animName, fadeDuration = 0.5) {
     if (character.currentAnimation) {
       const prevAnim = character.currentAnimation;
       animation.play();
+      if (once) {
+        animation.clampWhenFinished = true;
+        animation.setLoop(THREE.LoopOnce);
+      }
+      if (reverse) {
+        animation.timeScale = -1;
+      }
       character.currentAnimation.crossFadeTo(animation, fadeDuration, false);
       setTimeout(() => {
         prevAnim.stop();
@@ -243,10 +256,11 @@ export function generateInstructions(characters) {
   const instructions = [
     `go milady1 ${x + "," + y} ${duration}`,
     `sleep ${duration}`,
+    `say milady1 2000 ${words[Math.floor(Math.random() * words.length)]}`,
+    "do milady1 Talk",
+    `sleep 3000`,
     `do milady1 Idle`,
     `sleep 2000`,
-    `say milady1 2000 ${words[Math.floor(Math.random() * words.length)]}`,
-    `sleep 3000`,
   ];
 
   return instructions;
@@ -258,8 +272,38 @@ export function sayHello() {
     "sleep 2000",
     "go milady1 0,8 1000",
     "sleep 1000",
-    "say milady1 2000 dude",
+    "say milady1 2000 go away",
     "sleep 3000",
+  ];
+}
+
+export function goToBed(characters) {
+  const bedX = 0;
+  const bedZ = -4;
+  const currentPos = characters["milady1"].group.position;
+  const distance = Math.sqrt(
+    (currentPos.x - bedX) ** 2 + (currentPos.z - bedZ) ** 2
+  );
+  const duration = distance * 250;
+
+  return [
+    `go milady1 ${bedX + "," + bedZ} ${duration}`,
+    `sleep ${duration}`,
+    "lookat milady1 3,0 500",
+    "sleep 500",
+    "do milady1 Sleep once",
+    "sleep 3000",
+    "lookat milady1 -6,3 500",
+    "move milady1 -2,-6 500",
+    "sleep 2000",
+    "say milady1 2000 zzzz",
+    "sleep 2000",
+    // "go milady1 0,-4 500",
+    "move milady1 0,-4 500",
+    "lookat milady1 3,0 500",
+    "sleep 200",
+    "do milady1 Idle",
+    "sleep 500",
   ];
 }
 
@@ -292,4 +336,5 @@ const animsToLoad = [
   "Happy",
   "Yes",
   "No",
+  "Sleep",
 ]; // Add animation filenames here
