@@ -96,20 +96,6 @@ function init() {
     .onChange(() => {
       renderPixelatedPass.setPixelSize(params.pixelSize);
     });
-  // gui.add(renderPixelatedPass, "normalEdgeStrength").min(0).max(2).step(0.05);
-  // gui.add(renderPixelatedPass, "depthEdgeStrength").min(0).max(1).step(0.05);
-  const instructionControls = {
-    "Say Hello": () => {
-      instructions = sayHello();
-      console.log("instructions are ", instructions);
-      // instructions.push("say hello");
-    },
-    "Go To Sleep": () => {
-      instructions = goToBed(characters);
-    },
-  };
-  gui.add(instructionControls, "Say Hello");
-  gui.add(instructionControls, "Go To Sleep");
 }
 
 function onWindowResize() {
@@ -264,13 +250,30 @@ function initInstructions() {
 }
 
 function addLighting() {
-  const light = new THREE.AmbientLight(0xffffff, 0.5); // soft white light
+  const light = new THREE.AmbientLight(0xffffff, 0.8); // soft white light
   scene.add(light);
 
   drawLight(
     new THREE.Vector3(7, 2, 9),
     new THREE.Euler(-Math.PI / 10, Math.PI / 2, 0),
-    0.5,
+    0.1,
     scene
   );
 }
+
+document
+  .getElementById("console-button-rest")
+  .addEventListener("click", function (e) {
+    instructions = goToBed(characters);
+  });
+
+document
+  .getElementById("console-button-chill")
+  .addEventListener("click", function (e) {
+    window.alert("coming soon!");
+  });
+document
+  .getElementById("console-button-post")
+  .addEventListener("click", function (e) {
+    window.alert("coming soon!");
+  });

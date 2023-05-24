@@ -95,13 +95,36 @@
         </div>
 
         <div id="controls">
-          <button type="button" class="nes-btn is-warning">REST</button>
-          <button type="button" class="nes-btn is-primary">RELAX</button>
-          <button type="button" class="nes-btn is-success">POST</button>
+          <button
+            type="button"
+            class="nes-btn is-warning"
+            id="console-button-rest"
+          >
+            REST
+          </button>
+          <button
+            type="button"
+            class="nes-btn is-primary"
+            id="console-button-chill"
+          >
+            CHILL
+          </button>
+          <button
+            type="button"
+            class="nes-btn is-success"
+            id="console-button-post"
+          >
+            POST
+          </button>
         </div>
       </div>
 
       <div>
+        <audio controls autoplay loop>
+          <source src="./assets/audio/charlieshere.mp3" type="audio/mpeg" />
+          Your browser does not support the audio element.
+        </audio>
+        <br />
         <a
           class="desktop"
           onclick="window.open(document.URL, '_blank', 'location=yes,height=680,width=520,scrollbars=yes,status=yes');"

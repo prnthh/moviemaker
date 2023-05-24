@@ -33,8 +33,12 @@ export const animsToLoad = [
 ];
 
 export const words = [
-  "feds are coming bro",
-  "omg hiii",
-  "i love you",
+  "the internet is a divine gift \n and has immense potential",
+  "im such a lucky girl",
+  "the vibe is shifting... can you feel it?",
   "i hate you",
+  "*bzzzz*",
+  "im just a hampter",
+  "everything is going to be ok",
+  "Ugly on the outside means \nugly on the inside. Nothing \ngood will ever appear rotten...\nnot to your heart.",
 ];

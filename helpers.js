@@ -145,7 +145,7 @@ export function drawText(
       side: THREE.DoubleSide,
     });
 
-    const shapes = font.generateShapes(message, 1);
+    const shapes = font.generateShapes(message, 1.2);
 
     const geometry = new THREE.ShapeGeometry(shapes);
 
@@ -289,7 +289,8 @@ export function sayHello() {
     "go milady1 0,8 1000",
     "sleep 1000",
     "say milady1 2000 go away",
-    "sleep 3000",
+    "do milady1 No once",
+    "sleep 1000",
   ];
 }
 
