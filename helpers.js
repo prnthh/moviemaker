@@ -1,52 +1,15 @@
-function drawCubeWalls() {
-  const width = 12;
+import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { FBXLoader } from "three/addons/loaders/FBXLoader.js";
+import { FontLoader } from "three/addons/loaders/FontLoader.js";
 
-  const group = new THREE.Group();
-  group.position.z = -5;
-
-  const helper = new THREE.GridHelper(width, 16);
-  helper.rotation.x = Math.PI / 2;
-  group.add(helper);
-
-  const helper2 = new THREE.GridHelper(width, 16);
-  helper2.rotation.z = Math.PI / 2;
-  helper2.position.x = -width / 2;
-  helper2.position.z = width / 2;
-  group.add(helper2);
-
-  const helper3 = new THREE.GridHelper(12, 16);
-  helper3.rotation.z = Math.PI / 2;
-  helper3.position.x = width / 2;
-  helper3.position.z = width / 2;
-  group.add(helper3);
-
-  const helper4 = new THREE.GridHelper(12, 16);
-  helper4.position.y = width / 2;
-  helper4.position.z = width / 2;
-  group.add(helper4);
-
-  const helper5 = new THREE.GridHelper(12, 16);
-  helper5.position.y = -width / 2;
-  helper5.position.z = width / 2;
-  group.add(helper5);
-
-  return group;
-
-  var planeGeometry = new THREE.PlaneGeometry(10, 10);
-  var planeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-  var plane = new THREE.Mesh(planeGeometry, planeMaterial);
-  plane.position.z = -5;
-  plane.scale.setScalar(5);
-  return plane;
-}
-
-function drawObject(name, scene) {
-  var loader = new THREE.GLTFLoader();
+export function drawObject(name, scene) {
+  var loader = new GLTFLoader();
 
   loader.load(
-    "./pocketmilady/horroom.glb",
+    "./pocketmilady/room3.glb",
     function (gltf) {
-      model = gltf.scene;
+      var model = gltf.scene;
 
       model.traverse(function (node) {
         if (node.isMesh) {
@@ -101,20 +64,20 @@ function drawObject(name, scene) {
 }
 
 const assetPath = "./assets/models/";
-function drawCharacter(name, scene, modelToLoad = "Milady") {
+export function drawCharacter(characters, name, scene, modelToLoad = "Milady") {
   const group = new THREE.Group();
 
-  const loader = new THREE.FBXLoader();
+  const loader = new FBXLoader();
   loader.setPath(assetPath);
   loader.load(modelToLoad + "/model.fbx", (fbx) => {
-    fbx.scale.setScalar(0.05);
+    fbx.scale.setScalar(0.01);
     fbx.traverse((c) => {
       c.castShadow = true;
       c.receiveShadow = true;
       if (c.material) c.material.shininess = 0;
     });
 
-    const animLoader = new THREE.FBXLoader();
+    const animLoader = new FBXLoader();
     const mixer = new THREE.AnimationMixer(fbx);
     const animations = {};
 
@@ -143,12 +106,13 @@ function drawCharacter(name, scene, modelToLoad = "Milady") {
   });
 }
 
-function drawText(
+export function drawText(
+  scene,
   message = "Milady\nWorld Order",
   position,
   maxDuration = 2000
 ) {
-  const loader = new THREE.FontLoader();
+  const loader = new FontLoader();
   loader.load("fonts/helvetiker_regular.typeface.json", function (font) {
     const color = 0xebff38;
 
@@ -187,54 +151,13 @@ function drawText(
     setTimeout(() => {
       scene.remove(text);
     }, maxDuration);
-
-    // make line shape ( N.B. edge view remains visible )
-
-    // const holeShapes = [];
-
-    // for (let i = 0; i < shapes.length; i++) {
-    //   const shape = shapes[i];
-
-    //   if (shape.holes && shape.holes.length > 0) {
-    //     for (let j = 0; j < shape.holes.length; j++) {
-    //       const hole = shape.holes[j];
-    //       holeShapes.push(hole);
-    //     }
-    //   }
-    // }
-
-    // shapes.push.apply(shapes, holeShapes);
-
-    // const lineText = new THREE.Object3D();
-
-    // for (let i = 0; i < shapes.length; i++) {
-    //   const shape = shapes[i];
-
-    //   const points = shape.getPoints();
-    //   const geometry = new THREE.BufferGeometry().setFromPoints(points);
-
-    //   geometry.translate(xMid, 0, 0);
-
-    //   const lineMesh = new THREE.Line(geometry, matDark);
-    //   lineText.add(lineMesh);
-    // }
-
-    // scene.add(lineText);
-
-    // render();
   }); //end load function
 }
 
-function switchAnimation(characterName, animName, fadeDuration = 0.5) {
-  const character = characters[characterName];
-  if (!character) {
-    console.error(`Character ${characterName} not found.`);
-    return;
-  }
-
+export function switchAnimation(character, animName, fadeDuration = 0.5) {
   const animation = character.animations[animName];
   if (!animation) {
-    console.error(`Animation name ${animName} not found for ${characterName}.`);
+    console.error(`Animation name ${animName} not found for ${character}.`);
     return;
   }
 
@@ -251,11 +174,11 @@ function switchAnimation(characterName, animName, fadeDuration = 0.5) {
       animation.play();
     }
 
-    characters[characterName].currentAnimation = animation;
+    character.currentAnimation = animation;
   }
 }
 
-function drawLight(position, rotation, intensity, scene) {
+export function drawLight(position, rotation, intensity, scene) {
   // const light = new THREE.DirectionalLight("lightyellow", intensity);
   const light = new THREE.PointLight("lightyellow", intensity);
   light.castShadow = true;
@@ -273,20 +196,20 @@ function drawLight(position, rotation, intensity, scene) {
   scene.add(cube);
 }
 
-function printToLogs(text) {
+export function printToLogs(text) {
   const logs = document.getElementById("log");
   logs.innerHTML += `<div> #! ${text}</div>`;
   logs.scrollTop = logs.scrollHeight;
 }
-function processTextbox(e) {
+export function processTextbox(e) {
   if (e.key == "Enter") {
     addToQueue();
   }
 }
 
-function generateInstructions() {
+export function generateInstructions(instructions) {
   const string =
-    "sleep 2000; do milady1 LookAround; sleep 9500; do milady1 HipDance; sleep 8500; do milady1 HipDance2; sleep 8000;";
+    "sleep 2000; say milady1 2000 dude; do milady1 Sad; sleep 9500; do milady1 Happy; sleep 8500; do milady1 Yes; sleep 8000;";
   instructions = [...string.split(";")];
   instructions = instructions.map((instruction) => {
     return instruction.trim();
@@ -311,4 +234,8 @@ const animsToLoad = [
   "Waving",
   "HipDance",
   "HipDance2",
+  "Sad",
+  "Happy",
+  "Yes",
+  "No",
 ]; // Add animation filenames here
