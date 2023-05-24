@@ -2,8 +2,14 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { FBXLoader } from "three/addons/loaders/FBXLoader.js";
 import { FontLoader } from "three/addons/loaders/FontLoader.js";
+import { animsToLoad, words } from "./constants.js";
 
-export function drawObject(name, scene) {
+export function drawRoom(
+  name,
+  scene,
+  wallColor = "0xc99dc7",
+  floor = "0x662c07"
+) {
   var loader = new GLTFLoader();
 
   loader.load(
@@ -15,6 +21,16 @@ export function drawObject(name, scene) {
         if (node.isMesh) {
           node.castShadow = true;
           node.receiveShadow = true;
+          console.log(node.name);
+
+          var primaryColor = wallColor;
+          if (node.name == "Node-Mesh_2")
+            node.material.color.setHex(primaryColor);
+          var secondaryColor = (primaryColor & 0xfefefe) >> 1;
+          if (node.name == "Node-Mesh_1")
+            node.material.color.setHex(secondaryColor);
+
+          if (node.name == "Node-Mesh_6") node.material.color.setHex(floor);
         }
       });
 
@@ -315,26 +331,3 @@ export function usePC(instructions) {
     "sleep 3000",
   ];
 }
-
-const words = ["feds are coming bro", "omg hiii", "i love you", "i hate you"];
-
-const animsToLoad = [
-  "Walk",
-  "Talk",
-  "SillyDancing",
-  "Dancing2",
-  "Idle",
-  "DJ",
-  "HeadNod",
-  "LookAround",
-  "Opening",
-  "Taunt",
-  "Waving",
-  "HipDance",
-  "HipDance2",
-  "Sad",
-  "Happy",
-  "Yes",
-  "No",
-  "Sleep",
-]; // Add animation filenames here

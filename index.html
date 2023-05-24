@@ -37,14 +37,18 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/20.0.0/tween.umd.js"></script>
     <script type="module" src="helpers.js"></script>
-    <style>
-      body {
-        font-family: "Press Start 2P";
-      }
-    </style>
+    <script type="module" src="constants.js"></script>
+    <link rel="stylesheet" href="./style.css" />
   </head>
 
-  <body style="margin: 0px; text-align: center; background-color: black">
+  <body
+    style="
+      margin: 0px;
+      text-align: center;
+      background-color: black;
+      background-image: url(./assets/images/tilingbg.jpeg);
+    "
+  >
     <div
       style="
         display: flex;
@@ -56,16 +60,7 @@
     >
       <div id="console" class="nes-container is-rounded">
         <div style="margin-bottom: 15px">
-          <span
-            style="
-              border-radius: 50px;
-              background-color: rgba(0, 0, 0, 0.2);
-              padding: 8px;
-            "
-            class="nes-text"
-          >
-            Pocket Milady © 1998</span
-          >
+          <span id="consoleLogo" class="nes-text"> Pocket Milady © 1998</span>
         </div>
 
         <canvas
@@ -75,23 +70,23 @@
           loading...
         </canvas>
 
-        <div
-          style="
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            margin: -65px 10px 0px 5px;
-          "
-        >
+        <div id="statsDisplay">
           <div style="width: 20%">
-            <progress
-              class="nes-progress is-primary"
-              value="80"
-              max="100"
-            ></progress>
+            <div>
+              <span class="nes-text is-primary">REST</span>
+              <progress
+                style="height: 20px"
+                class="nes-progress is-primary"
+                value="80"
+                max="100"
+              ></progress>
+            </div>
           </div>
+          <div class="flexRow nes-text" style="color: white">2</div>
           <div style="width: 20%">
+            <span class="nes-text is-primary">BASED</span>
             <progress
+              style="height: 20px"
               class="nes-progress is-primary"
               value="80"
               max="100"
@@ -100,48 +95,27 @@
         </div>
 
         <div id="controls">
-          <button type="button" class="nes-btn is-primary">Hydrate</button>
-          <button type="button" class="nes-btn is-success">Chat</button>
-          <button type="button" class="nes-btn is-warning">Lurk</button>
+          <button type="button" class="nes-btn is-warning">REST</button>
+          <button type="button" class="nes-btn is-primary">RELAX</button>
+          <button type="button" class="nes-btn is-success">POST</button>
         </div>
       </div>
 
       <div>
+        <a
+          class="desktop"
+          onclick="window.open(document.URL, '_blank', 'location=yes,height=680,width=520,scrollbars=yes,status=yes');"
+        >
+          <button type="button" class="nes-btn is-primary">
+            Open in New Window
+          </button>
+        </a>
+        <br />
         <a href="https://twitter.com/prnth_" target="_blank"
           ><i class="nes-icon twitter is-large"></i
         ></a>
       </div>
     </div>
     <script type="module" src="index.js"></script>
-    <style>
-      #controls {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        margin: 20px;
-        padding: 30px;
-        background-color: rgba(0, 0, 0, 0.2);
-        border-radius: 15px;
-      }
-
-      #console {
-        background-color: red;
-        padding: 15px;
-        margin: 15px;
-        width: 100%;
-        max-width: 800px;
-      }
-
-      @media (max-width: 600px) {
-        #controls {
-          flex-direction: column;
-        }
-
-        #console {
-          margin: 2px;
-          padding: 0px;
-        }
-      }
-    </style>
   </body>
 </html>

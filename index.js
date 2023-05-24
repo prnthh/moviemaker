@@ -1,7 +1,7 @@
 import {
   drawCharacter,
   drawLight,
-  drawObject,
+  drawRoom,
   drawText,
   generateInstructions,
   goToBed,
@@ -17,6 +17,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPixelatedPass } from "three/addons/postprocessing/RenderPixelatedPass.js";
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
+import { initialInstructions } from "./constants.js";
 
 let camera, scene, renderer, composer, crystalMesh, clock;
 let gui, params;
@@ -31,6 +32,8 @@ initInstructions();
 var aspectRatio;
 
 function init() {
+  THREE.ColorManagement.enabled = false;
+
   var myCanvas = document.getElementById("threeCanvas");
   var sceneWidth = myCanvas.offsetWidth; // window.innerWidth;
   var sceneHeight = Math.min(sceneWidth / 1.15, window.innerHeight);
@@ -58,7 +61,7 @@ function init() {
   });
   renderer.setSize(sceneWidth, sceneHeight);
   renderer.shadowMap.enabled = true;
-  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setClearColor(0xffffff, 0);
 
@@ -73,7 +76,7 @@ function init() {
   controls.maxZoom = 2;
 
   addLighting();
-  drawObject("room", scene);
+  drawRoom("room", scene);
   // gui
 
   gui = new GUI();
@@ -257,17 +260,7 @@ setTimeout(function () {
 }, 2000);
 
 function initInstructions() {
-  instructions = [
-    "character milady1 MiladyShort",
-    "sleep 500",
-    "go milady1 0,8 1500",
-    "sleep 1500",
-    "say milady1 800 hi there",
-    "sleep 2000",
-    "say milady1 2000 nice to see you again",
-    "do milady1 Yes",
-    "sleep 2000",
-  ];
+  instructions = initialInstructions;
 }
 
 function addLighting() {

@@ -1,0 +1,59 @@
+body {
+  font-family: "Press Start 2P";
+}
+
+#consoleLogo {
+  border-radius: 50px;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 8px;
+}
+
+#statsDisplay {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: -65px 10px 0px 5px;
+}
+
+#controls {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 20px;
+  padding: 30px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 15px;
+}
+
+#console {
+  background-color: red;
+  padding: 15px;
+  margin: 15px;
+  width: 100%;
+  max-width: 800px;
+}
+
+.desktop {
+}
+
+.flexRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media (max-width: 600px) {
+  #controls {
+    flex-direction: column;
+  }
+
+  #console {
+    margin: 2px;
+    padding: 0px;
+  }
+
+  .desktop {
+    display: none;
+  }
+}
