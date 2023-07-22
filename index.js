@@ -5,7 +5,10 @@ import {
   drawText,
   generateInstructions,
   goToBed,
+  moveJoint,
+  printToChat,
   printToLogs,
+  printToSubtitles,
   rotateToFace,
   sayHello,
   switchAnimation,
@@ -17,9 +20,13 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPixelatedPass } from "three/addons/postprocessing/RenderPixelatedPass.js";
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
-import { initialInstructions } from "./constants.js";
+import {
+  SampleMeanYoutubeComments,
+  initialInstructions,
+  sampleUsernames,
+} from "./constants.js";
 
-let camera, scene, renderer, composer, crystalMesh, clock;
+let camera, scene, renderer, composer, clock, controls;
 let gui, params;
 
 var characters = {};
@@ -34,36 +41,19 @@ var aspectRatio;
 function init() {
   THREE.ColorManagement.enabled = false;
 
-  var myCanvas = document.getElementById("threeCanvas");
-  var sceneWidth = myCanvas.offsetWidth; // window.innerWidth;
-  var sceneHeight = Math.min(sceneWidth / 1.15, window.innerHeight);
-  aspectRatio = sceneWidth / sceneHeight;
-  camera = new THREE.OrthographicCamera(
-    -aspectRatio,
-    aspectRatio,
-    1,
-    -1,
-    -10,
-    100
-  );
-  camera.position.y = 1 * Math.tan(Math.PI / 6);
-  camera.position.z = 1;
-  camera.zoom = 0.1;
+  const loadingManager = new THREE.LoadingManager(() => {
+    const loadingScreen = document.getElementById("loading-screen");
+    loadingScreen.classList.add("fade-out");
 
+    // optional: remove loader from DOM via event listener
+    loadingScreen.addEventListener("transitionend", onTransitionEnd);
+  });
+
+  initialiseCamera();
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x000000);
 
   clock = new THREE.Clock();
-
-  renderer = new THREE.WebGLRenderer({
-    antialias: true,
-    canvas: myCanvas,
-  });
-  renderer.setSize(sceneWidth, sceneHeight);
-  renderer.shadowMap.enabled = true;
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setClearColor(0xffffff, 0);
 
   composer = new EffectComposer(renderer);
   const renderPixelatedPass = new RenderPixelatedPass(6, scene, camera);
@@ -72,8 +62,11 @@ function init() {
   window.addEventListener("resize", onWindowResize);
   setTimeout(onWindowResize, 1);
 
-  const controls = new OrbitControls(camera, renderer.domElement);
-  controls.maxZoom = 2;
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enablePan = false;
+  controls.target = new THREE.Vector3(0, -1, 0);
+  controls.update();
+  // controls.enableZoom = false;
 
   addLighting();
   drawRoom("room", scene);
@@ -81,7 +74,7 @@ function init() {
 
   gui = new GUI();
   params = {
-    pixelSize: 4,
+    pixelSize: 2,
     // normalEdgeStrength: 0.3,
     // depthEdgeStrength: 0.4,
     // pixelAlignedPanning: true,
@@ -98,10 +91,39 @@ function init() {
     });
 }
 
-function onWindowResize() {
+function initialiseCamera() {
   var myCanvas = document.getElementById("threeCanvas");
-  var sceneWidth = myCanvas.offsetWidth;
-  var sceneHeight = Math.min(sceneWidth / 1.15, window.innerHeight);
+  var sceneWidth = window.innerHeight / 1.8; // window.innerWidth / 2;
+  var sceneHeight = window.innerHeight; // Math.max(sceneWidth / 1, window.innerHeight);
+  aspectRatio = sceneWidth / sceneHeight;
+  camera = new THREE.OrthographicCamera(
+    -aspectRatio,
+    aspectRatio,
+    1,
+    -1,
+    -10,
+    100
+  );
+  // camera.position.y = -0.2;
+  camera.position.z = 8;
+  camera.position.y = 1;
+  // camera.rotation.x = Math.PI * 1;
+  camera.rotation.y = Math.PI * 0.5;
+  camera.zoom = 0.2;
+
+  renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    canvas: myCanvas,
+  });
+  renderer.shadowMap.enabled = true;
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setClearColor(0xffffff, 0);
+}
+
+function onWindowResize() {
+  var sceneWidth = window.innerHeight / 1.8; // window.innerWidth / 2;
+  var sceneHeight = window.innerHeight; // Math.max(sceneWidth / 1, window.innerHeight);
   aspectRatio = sceneWidth / sceneHeight;
 
   camera.left = -aspectRatio;
@@ -113,13 +135,19 @@ function onWindowResize() {
 }
 
 function animate() {
-  requestAnimationFrame(animate);
-
   // Reset the Camera Frustum if it has been modified
   camera.left = -aspectRatio;
   camera.right = aspectRatio;
   camera.top = 1.0;
   camera.bottom = -1.0;
+
+  var character = Object.values(characters)[0];
+
+  // if (character != undefined) {
+  //   controls.target = character.group.position;
+  //   controls.update();
+  // }
+
   camera.updateProjectionMatrix();
 
   const delta = clock.getDelta();
@@ -130,6 +158,7 @@ function animate() {
   }
 
   composer.render();
+  requestAnimationFrame(animate);
 }
 
 function addToQueue() {
@@ -187,12 +216,13 @@ function processInstruction() {
       var actionDuration = parts[2];
       var character = characters[name];
       if (character === undefined) break;
-      drawText(
-        scene,
-        parts.slice(3).join(" "),
-        character.group.position,
-        actionDuration
-      );
+      // drawText(
+      //   scene,
+      //   parts.slice(3).join(" "),
+      //   character.group.position,
+      //   actionDuration
+      // );
+      printToSubtitles(parts.slice(3).join(" "));
       break;
     case "move":
       var name = parts[1];
@@ -277,3 +307,29 @@ document
   .addEventListener("click", function (e) {
     window.alert("coming soon!");
   });
+
+document.addEventListener("mousemove", function (e) {
+  var mousecoords = getMousePos(e);
+
+  var character = Object.values(characters)[0];
+
+  if (character && character["neck"] && character["waist"]) {
+    moveJoint(mousecoords, character["neck"], 30);
+    moveJoint(mousecoords, character["waist"], 20);
+  }
+});
+function getMousePos(e) {
+  return { x: e.clientX, y: e.clientY };
+}
+
+function printRandomChat() {
+  printToChat(
+    sampleUsernames[Math.floor(Math.random() * sampleUsernames.length)],
+    SampleMeanYoutubeComments[
+      Math.floor(Math.random() * SampleMeanYoutubeComments.length)
+    ]
+  );
+  setTimeout(printRandomChat, Math.random() * 1000 + 400);
+}
+
+printRandomChat();

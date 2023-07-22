@@ -18,17 +18,38 @@ export function drawRoom(
       var model = gltf.scene;
 
       model.traverse(function (node) {
+        // reduce the brightness of the lights
+        if (node.isPlane) {
+          node.receiveShadow = true;
+          node.castShadow = true;
+          node.material.color.setHex(floor);
+        }
+
         if (node.isMesh) {
           node.castShadow = true;
           node.receiveShadow = true;
+
           console.log(node.name);
 
           var primaryColor = wallColor;
           if (node.name == "Node-Mesh_2")
             node.material.color.setHex(primaryColor);
           var secondaryColor = (primaryColor & 0xfefefe) >> 1;
+
           if (node.name == "Node-Mesh_1")
             node.material.color.setHex(secondaryColor);
+
+          if (node.name == "Plane")
+            assignImageTextureToNode(
+              node,
+              "https://pbs.twimg.com/media/F1pXvFsWIAE6yc9?format=png&name=900x900"
+            );
+
+          if (node.name == "Plane001")
+            assignImageTextureToNode(
+              node,
+              "https://pbs.twimg.com/media/Fwma3LvXoAE1IKo?format=png&name=small"
+            );
 
           if (node.name == "Node-Mesh_6") node.material.color.setHex(floor);
         }
@@ -40,10 +61,8 @@ export function drawRoom(
       model.position.y = -6.2;
       model.receiveShadow = true;
       model.castShadow = true;
-      model.rotation.y = Math.PI / 4;
+      model.rotation.y = Math.PI / 2;
       scene.add(model);
-
-      loaderAnim.remove();
 
       mixer = new THREE.AnimationMixer(model);
 
@@ -80,8 +99,20 @@ export function drawRoom(
   );
 }
 
+function assignImageTextureToNode(node, image) {
+  // node.material.color.setHex(secondaryColor);
+  const texture = new THREE.TextureLoader().load(image);
+  texture.rotation = Math.PI;
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  const material = new THREE.MeshBasicMaterial({ map: texture });
+
+  node.material = material;
+}
+
 const assetPath = "./assets/models/";
 export function drawCharacter(characters, name, scene, modelToLoad = "Milady") {
+  let neck, waist;
   const group = new THREE.Group();
 
   const loader = new FBXLoader();
@@ -91,7 +122,18 @@ export function drawCharacter(characters, name, scene, modelToLoad = "Milady") {
     fbx.traverse((c) => {
       c.castShadow = true;
       c.receiveShadow = true;
-      if (c.material) c.material.shininess = 0;
+      if (c.material) {
+        c.material.shininess = 0.1;
+      }
+      console.log(c.name);
+
+      // Reference the neck and waist bones
+      if (c.isBone && c.name === "mixamorigNeck") {
+        neck = c;
+      }
+      if (c.isBone && c.name === "mixamorigSpine") {
+        waist = c;
+      }
     });
 
     const animLoader = new FBXLoader();
@@ -102,7 +144,10 @@ export function drawCharacter(characters, name, scene, modelToLoad = "Milady") {
       animLoader.setPath(assetPath + modelToLoad + "/anims/");
       try {
         animLoader.load(animFile + ".fbx", (anim) => {
-          const action = mixer.clipAction(anim.animations[0]);
+          var thisAnim = anim.animations[0];
+          thisAnim.tracks.splice(3, 3);
+          thisAnim.tracks.splice(9, 3);
+          const action = mixer.clipAction(thisAnim);
           animations[animFile] = action;
         });
       } catch (e) {
@@ -115,12 +160,21 @@ export function drawCharacter(characters, name, scene, modelToLoad = "Milady") {
     scene.add(group);
     // characters[name] = group;
     characters[name] = {
+      neck: neck,
+      waist: waist,
       group: group,
       mixer: mixer,
       animations: animations,
       currentAnimation: null, // Add this line
     };
   });
+}
+
+export function moveJoint(mouse, joint, degreeLimit) {
+  let degrees = getMouseDegrees(mouse.x, mouse.y, degreeLimit);
+
+  joint.rotation.y = THREE.MathUtils.degToRad(degrees.x);
+  joint.rotation.x = THREE.MathUtils.degToRad(degrees.y) + 50;
 }
 
 export function drawText(
@@ -230,6 +284,50 @@ export function rotateToFace(objectToRotate, x, z, duration = 600) {
     .start();
 }
 
+function getMouseDegrees(x, y, degreeLimit) {
+  let dx = 0,
+    dy = 0,
+    xdiff,
+    xPercentage,
+    ydiff,
+    yPercentage;
+
+  let w = { x: window.innerWidth, y: window.innerHeight };
+
+  // Left (Rotates neck left between 0 and -degreeLimit)
+
+  // 1. If cursor is in the left half of screen
+  if (x <= w.x / 2) {
+    // 2. Get the difference between middle of screen and cursor position
+    xdiff = w.x / 2 - x;
+    // 3. Find the percentage of that difference (percentage toward edge of screen)
+    xPercentage = (xdiff / (w.x / 2)) * 100;
+    // 4. Convert that to a percentage of the maximum rotation we allow for the neck
+    dx = ((degreeLimit * xPercentage) / 100) * -1;
+  }
+  // Right (Rotates neck right between 0 and degreeLimit)
+  if (x >= w.x / 2) {
+    xdiff = x - w.x / 2;
+    xPercentage = (xdiff / (w.x / 2)) * 100;
+    dx = (degreeLimit * xPercentage) / 100;
+  }
+  // Up (Rotates neck up between 0 and -degreeLimit)
+  if (y <= w.y / 2) {
+    ydiff = w.y / 2 - y;
+    yPercentage = (ydiff / (w.y / 2)) * 100;
+    // Note that I cut degreeLimit in half when she looks up
+    dy = ((degreeLimit * 0.5 * yPercentage) / 100) * -1;
+  }
+
+  // Down (Rotates neck down between 0 and degreeLimit)
+  if (y >= w.y / 2) {
+    ydiff = y - w.y / 2;
+    yPercentage = (ydiff / (w.y / 2)) * 100;
+    dy = (degreeLimit * yPercentage) / 100;
+  }
+  return { x: dx, y: dy };
+}
+
 export function drawLight(position, rotation, intensity, scene) {
   // const light = new THREE.DirectionalLight("lightyellow", intensity);
   const light = new THREE.PointLight("lightyellow", intensity);
@@ -250,9 +348,37 @@ export function drawLight(position, rotation, intensity, scene) {
 
 export function printToLogs(text) {
   console.log(text);
-  // const logs = document.getElementById("log");
+  // const logs = document.getElementById("terminal");
   // logs.innerHTML += `<div> #! ${text}</div>`;
   // logs.scrollTop = logs.scrollHeight;
+}
+
+export function printToChat(username, text) {
+  const logs = document.getElementById("chat");
+  logs.innerHTML += `<div><b>${username}</b>:${text}</div>`;
+  logs.scrollTop = logs.scrollHeight;
+}
+
+export function printToSubtitles(text, duration = 2000) {
+  const subtitles = document.getElementById("subtitles");
+  subtitles.innerHTML = "";
+  // print word by word for the duration
+  const words = text.split(" ");
+  let wordIndex = 0,
+    word;
+  let wordDuration = duration / words.length;
+  const interval = setInterval(() => {
+    if (wordIndex >= words.length) {
+      clearInterval(interval);
+    } else {
+      word = words[wordIndex];
+      subtitles.innerHTML += word + " ";
+      subtitles.scrollTop = subtitles.scrollHeight;
+    }
+    wordIndex++;
+
+    // subtitles.innerHTML = text;
+  }, wordDuration);
 }
 export function processTextbox(e) {
   if (e.key == "Enter") {
@@ -260,23 +386,23 @@ export function processTextbox(e) {
   }
 }
 
+// export function generateInstructions(characters) {
+//   // generate random xy coordinate
+//   const x = Math.floor((-0.5 + Math.random()) * 10);
+//   const y = Math.floor(-0.5 + Math.random() * 10);
+
+//   const currentPos = characters["milady1"].group.position;
+//   const distance = Math.sqrt((currentPos.x - x) ** 2 + (currentPos.z - y) ** 2);
+//   const duration = distance * 250;
+// }
+
 export function generateInstructions(characters) {
-  // generate random xy coordinate
-  const x = Math.floor((-0.5 + Math.random()) * 10);
-  const y = Math.floor(-0.5 + Math.random() * 10);
-
-  const currentPos = characters["milady1"].group.position;
-  const distance = Math.sqrt((currentPos.x - x) ** 2 + (currentPos.z - y) ** 2);
-  const duration = distance * 250;
-
   const instructions = [
-    `go milady1 ${x + "," + y} ${duration}`,
-    `sleep ${duration}`,
-    `say milady1 2000 ${words[Math.floor(Math.random() * words.length)]}`,
-    "do milady1 Talk",
+    // `go milady1 ${x + "," + y} ${duration}`,
+    // `sleep ${duration}`,
+    `say milady1 3000 ${words[Math.floor(Math.random() * words.length)]}`,
+    `do milady1 ${animsToLoad[Math.floor(Math.random() * animsToLoad.length)]}`,
     `sleep 3000`,
-    `do milady1 Idle`,
-    `sleep 2000`,
   ];
 
   return instructions;

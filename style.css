@@ -1,18 +1,17 @@
 body {
-  font-family: "Press Start 2P";
-}
-
-#consoleLogo {
-  border-radius: 50px;
-  background-color: rgba(0, 0, 0, 0.2);
-  padding: 8px;
+  /* font-family: "Press Start 2P"; */
+  font-family: "Verdana";
 }
 
 #statsDisplay {
+  color: white;
+  font-size: 10px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin: -65px 10px 0px 5px;
+  margin: -35px 10px 0px 5px;
+  background-color: rgb(7, 201, 43);
+  z-index: 100;
 }
 
 #controls {
@@ -20,20 +19,31 @@ body {
   flex-direction: row;
   justify-content: space-between;
   margin: 20px;
-  padding: 30px;
+  padding: 10px;
   background-color: rgba(0, 0, 0, 0.2);
   border-radius: 15px;
 }
 
 #console {
-  background-color: red;
-  padding: 15px;
-  margin: 15px;
-  width: 100%;
-  max-width: 800px;
+  /* background-color: red;
+  aspect-ratio: 1 / 1.618;
+  height: 90vh;
+  max-height: 90vh;
+  width: 100vw;
+  max-width: 400px;
+  border-radius: 5% 5% 25% 25%;
+  padding: 10px;
+  border: 5px solid rgba(255, 255, 255, 0.5);
+  border-right: 5px solid rgba(0, 0, 0, 0.3);
+  border-bottom: 5px solid rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75); */
 }
 
-.desktop {
+#console-img {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .flexRow {
@@ -50,7 +60,7 @@ body {
 
   #console {
     margin: 2px;
-    padding: 0px;
+    padding: 4px;
   }
 
   .desktop {

@@ -1,0 +1,601 @@
+html {
+  font-size: 2vw;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #ffffff;
+  background: -moz-linear-gradient(top, #ffffff 0%, #c9c9c9 100%);
+  background: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0%, #ffffff),
+    color-stop(100%, #e5e5e5)
+  );
+  background: -webkit-linear-gradient(top, #ffffff 0%, #c9c9c9 100%);
+  background: -o-linear-gradient(top, #ffffff 0%, #c9c9c9 100%);
+  background: -ms-linear-gradient(top, #ffffff 0%, #c9c9c9 100%);
+  background: linear-gradient(to bottom, #ffffff 0%, #c9c9c9 100%);
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .system-container#gbasp {
+    width: 40rem;
+    height: 73rem;
+    margin: 2rem auto;
+    z-index: 0;
+
+    .screen-body {
+      background-color: #2222ff;
+      background: linear-gradient(
+        10deg,
+        lighten(#2222ff, 5%),
+        #2222ff,
+        darken(#2222ff, 15%)
+      );
+      width: 40rem;
+      height: 34rem;
+      border-radius: 2.4rem;
+      position: relative;
+      padding: 2rem;
+      box-sizing: border-box;
+      border: 0.3rem solid darken(#2222ff, 15%);
+      border-right-color: lighten(#2222ff, 20%);
+      border-top-color: lighten(#2222ff, 10%);
+      &:before {
+        content: "";
+        width: 18rem;
+        height: 0.8rem;
+        background-color: #2222ff;
+        position: absolute;
+        bottom: -0.8rem;
+        z-index: -1;
+        left: 2rem;
+        border-right: 0.2rem solid lighten(#2222ff, 20%);
+        -webkit-box-shadow: inset 0rem 0.6rem 0.5rem 0rem rgba(0, 0, 0, 0.75);
+        -moz-box-shadow: inset 0rem 0.6rem 0.5rem 0rem rgba(0, 0, 0, 0.75);
+        box-shadow: inset 0rem 0.6rem 0.5rem 0rem rgba(0, 0, 0, 0.75);
+      }
+      &:after {
+        content: "";
+        width: 3.2rem;
+        height: 0.8rem;
+        background-color: #2222ff;
+        position: absolute;
+        bottom: -0.8rem;
+        z-index: -1;
+        left: 32rem;
+        border-right: 0.2rem solid lighten(#2222ff, 20%);
+        -webkit-box-shadow: inset 0rem 0.6rem 0.5rem 0rem rgba(0, 0, 0, 0.75);
+        -moz-box-shadow: inset 0rem 0.6rem 0.5rem 0rem rgba(0, 0, 0, 0.75);
+        box-shadow: inset 0rem 0.6rem 0.5rem 0rem rgba(0, 0, 0, 0.75);
+      }
+    }
+    .screen-border {
+      background-color: #333;
+      width: 100%;
+      margin: 1.6rem auto;
+      height: 26.8rem;
+      box-sizing: border-box;
+      border: 0.4rem solid lighten(#2222ff, 30%);
+      border-radius: 0.8rem;
+      border-top-color: darken(#2222ff, 25%);
+      border-right-color: darken(#2222ff, 15%);
+      border-bottom-color: lighten(#2222ff, 20%);
+    }
+
+    .screen-border > img {
+      position: absolute;
+      left: 11.2rem;
+      bottom: 4rem;
+      opacity: 0.7;
+      width: 17.5rem;
+    }
+    .screen {
+      background-color: #777788;
+      margin: 2rem auto;
+      width: 90%;
+      height: 21rem;
+    }
+
+    .screen > iframe {
+      width: 100%;
+      height: 21rem;
+    }
+
+    .screen-bumper {
+      border-radius: 100%;
+      width: 2.2rem;
+      height: 2.2rem;
+      position: absolute;
+      background: radial-gradient(
+        circle at top left,
+        lighten(#2222ff, 10%),
+        darken(#2222ff, 20%)
+      );
+      border: 0.2rem solid darken(#2222ff, 20%);
+    }
+
+    #bumper-ul {
+      left: 1rem;
+      top: 0.6rem;
+    }
+
+    #bumper-ur {
+      right: 1rem;
+      top: 0.6rem;
+    }
+
+    #bumper-ll {
+      left: 1.2rem;
+      bottom: 0.4rem;
+    }
+
+    #bumper-lr {
+      right: 1.2rem;
+      bottom: 0.4rem;
+    }
+
+    #bumper-tm {
+      left: calc(50% - 1rem);
+      top: 0.8rem;
+    }
+
+    .small-bumper {
+      width: 1.6rem;
+      height: 1.6rem;
+      background: radial-gradient(
+        circle at bottom left,
+        #2222ff,
+        darken(#2222ff, 20%)
+      );
+      border-width: 0.1rem;
+      border-left-color: lighten(#2222ff, 5%);
+      border-bottom-color: lighten(#2222ff, 5%);
+    }
+
+    .swivel {
+      width: 100%;
+      border-radius: 1.6rem;
+      height: 4.8rem;
+      background-color: #2222ff;
+      position: relative;
+      top: 0.4rem;
+      -webkit-box-shadow: inset 0rem -2rem 0.8rem 0rem rgba(0, 0, 0, 0.4);
+      -moz-box-shadow: inset 0rem -2rem 0.8rem 0rem rgba(0, 0, 0, 0.4);
+      box-shadow: inset 0rem -2rem 0.8rem 0rem rgba(0, 0, 0, 0.4);
+      border-top: 0.2rem solid lighten(#2222ff, 5%);
+      &:before {
+        content: "";
+        width: 18rem;
+        height: 4.5rem;
+        position: absolute;
+        bottom: -2rem;
+        z-index: 1;
+        left: 2.2rem;
+        top: 0rem;
+        border-right: 0.2rem solid lighten(#2222ff, 20%);
+        border-left: 0.2rem solid darken(#2222ff, 25%);
+        border-bottom: 0.3rem solid darken(#2222ff, 50%);
+        -webkit-box-shadow: inset 0rem 1rem 0.5rem 0rem rgba(255, 255, 255, 0.2);
+        -moz-box-shadow: inset 0rem 1rem 0.5rem 0rem rgba(255, 255, 255, 0.2);
+        box-shadow: inset 0rem 1rem 0.5rem 0rem rgba(255, 255, 255, 0.2);
+      }
+      &:after {
+        content: "";
+        width: 3.2rem;
+        height: 4.5rem;
+        position: absolute;
+        bottom: -2rem;
+        z-index: 1;
+        left: 32.2rem;
+        top: 0rem;
+        border-right: 0.2rem solid lighten(#2222ff, 20%);
+        border-left: 0.2rem solid darken(#2222ff, 20%);
+        border-bottom: 0.3rem solid darken(#2222ff, 50%);
+        -webkit-box-shadow: inset 0rem 1rem 0.5rem 0rem rgba(255, 255, 255, 0.2);
+        -moz-box-shadow: inset 0rem 1rem 0.5rem 0rem rgba(255, 255, 255, 0.2);
+        box-shadow: inset 0rem 1rem 0.5rem 0rem rgba(255, 255, 255, 0.2);
+      }
+    }
+
+    .gamepad-body {
+      background-color: #2222ff;
+      background: linear-gradient(
+        10deg,
+        lighten(#2222ff, 5%),
+        #2222ff,
+        darken(#2222ff, 15%)
+      );
+      width: 40rem;
+      height: 36rem;
+      border-radius: 2.4rem;
+      position: relative;
+      padding: 2rem;
+      box-sizing: border-box;
+      border: 0.3rem solid darken(#2222ff, 15%);
+      border-right-color: lighten(#2222ff, 20%);
+      border-top-color: lighten(#2222ff, 10%);
+      z-index: -1;
+      top: -2.8rem;
+    }
+
+    .pad-container {
+      width: 11rem;
+      height: 11rem;
+      border: none;
+      border-radius: 100%;
+      position: absolute;
+      left: 2rem;
+      top: 10rem;
+      &:before {
+        content: "";
+        z-index: 0;
+        top: 0.4rem;
+        left: 0.4rem;
+        height: inherit;
+        width: inherit;
+        background: #2222ff;
+        position: absolute;
+        border-radius: inherit;
+      }
+      &:after {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        top: -0.4rem;
+        left: -0.4rem;
+        width: inherit;
+        height: inherit;
+        background: linear-gradient(
+          to right,
+          lighten(#2222ff, 10%),
+          darken(#2222ff, 30%)
+        );
+        border-radius: inherit;
+      }
+    }
+
+    .dpad-container {
+      border: none;
+      background: #2222ff;
+      z-index: 99;
+      &:before {
+        width: 11.8rem;
+        height: 11.8rem;
+        border-radius: 100%;
+        background: linear-gradient(
+          to right,
+          lighten(#2222ff, 10%),
+          darken(#2222ff, 30%)
+        );
+        content: "";
+        position: absolute;
+        top: -0.4rem;
+        left: -0.4rem;
+        z-index: -1;
+      }
+      &:after {
+        width: 10.2rem;
+        height: 10.2rem;
+        border-radius: 100%;
+        background: #2222ff;
+        content: "";
+        position: absolute;
+        top: 0.4rem;
+        left: 0.4rem;
+        z-index: -1;
+      }
+    }
+
+    .d-pad {
+      width: 2.8rem;
+      height: 8.4rem;
+      background-color: #333;
+      position: relative;
+      margin: 1.2rem auto;
+      box-sizing: border-box;
+      border: 0.2rem solid darken(#333, 20%);
+      border-top: 0.2rem solid lighten(#333, 20%);
+      border-right: 0.2rem solid lighten(#333, 20%);
+      &:before {
+        width: 3.1rem;
+        height: 2.8rem;
+        position: absolute;
+        content: "";
+        background-color: #333;
+        left: -3.1rem;
+        top: 2.6rem;
+        border-bottom: 0.2rem solid darken(#333, 20%);
+        border-left: 0.2rem solid darken(#333, 20%);
+        border-top: 0.2rem solid lighten(#333, 20%);
+        box-sizing: border-box;
+      }
+      &:after {
+        width: 3.1rem;
+        height: 2.8rem;
+        position: absolute;
+        content: "";
+        background-color: #333;
+        left: 2.3rem;
+        top: 2.6rem;
+        border-top: 0.2rem solid lighten(#333, 20%);
+        border-right: 0.2rem solid lighten(#333, 20%);
+        border-bottom: 0.2rem solid darken(#333, 20%);
+        box-sizing: border-box;
+      }
+    }
+
+    .buttons-container {
+      width: 12.4rem;
+      height: 5.1rem;
+      border: 0.8rem solid darken(#2222ff, 20%);
+      border: none !important;
+      background: yellow;
+      border-radius: 11rem;
+      position: relative;
+      left: 20.8rem;
+      top: 10.4rem;
+      border-top-color: darken(#2222ff, 30%);
+      border-left-color: lighten(#2222ff, 10%);
+      border-bottom-color: lighten(#2222ff, 5%);
+      transform: rotate(-12deg);
+      z-index: 1;
+      &:before {
+        width: inherit;
+        height: inherit;
+        background: #2222ff;
+        top: 0rem;
+        left: 0rem;
+        position: absolute;
+        content: "";
+        border-radius: 11rem;
+        z-index: 0;
+      }
+      &:after {
+        content: "";
+        position: absolute;
+        left: -0.8rem;
+        top: -0.8rem;
+        border-radius: 11rem;
+        width: 14rem;
+        height: 6.7rem;
+        background: linear-gradient(
+          to right,
+          lighten(#2222ff, 10%),
+          darken(#2222ff, 30%)
+        );
+        z-index: -1;
+      }
+      .letter {
+        display: block;
+        position: absolute;
+        z-index: 200;
+        top: 0.05em;
+        left: calc(50% - 0.3em);
+      }
+    }
+
+    .b-button,
+    .a-button {
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: 700;
+      line-height: 4rem;
+      font-size: 2.2rem;
+      color: lighten(#333, 5%);
+      transform: rotate(12deg);
+      text-align: center;
+      width: 4rem;
+      height: 4rem;
+      background-color: #333;
+      border-radius: 100%;
+      position: absolute;
+      left: 0.8rem;
+      top: 0.5rem;
+      box-sizing: border-box;
+      border: none;
+      &:before {
+        width: inherit;
+        height: inherit;
+        border-radius: inherit;
+        content: "";
+        position: absolute;
+        background: yellow;
+        left: -0rem;
+        top: -0rem;
+        background: linear-gradient(
+          to right,
+          lighten(#333, 10%),
+          darken(#333, 5%)
+        );
+        z-index: -1;
+      }
+      &:after {
+        width: 3.6rem;
+        height: 3.6rem;
+        background: #333;
+        content: "";
+        position: absolute;
+        left: 0.2rem;
+        top: 0.2rem;
+        border-radius: inherit;
+        z-index: 0;
+      }
+    }
+
+    .a-button {
+      left: 7.6rem;
+    }
+
+    .power-container {
+      width: 2rem;
+      height: 2rem;
+      position: absolute;
+      left: 18rem;
+      top: 5.2rem;
+      border-width: 0.5rem;
+      &:after {
+        width: 3.8rem;
+        height: 3.8rem;
+      }
+      &:before {
+        left: 0.5rem;
+        top: 0.5rem;
+      }
+    }
+
+    .power-button {
+      width: 2.1rem;
+      height: 2.1rem;
+      position: absolute;
+      left: calc(50% - 0.5rem);
+      top: calc(50% - 0.5rem);
+      color: #fff;
+      &:after {
+        width: 1.6rem;
+        height: 1.6rem;
+        left: 0.2rem;
+        top: 0.2rem;
+      }
+    }
+
+    .speaker-holder {
+      width: 8rem;
+      height: 8rem;
+      position: absolute;
+      top: 20rem;
+      left: 15rem;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .dot {
+      width: 0.3rem;
+      height: 0.3rem;
+      background-color: #000;
+      margin: 0.8rem;
+      border-radius: 100%;
+    }
+
+    .large-dot {
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 0.5rem;
+    }
+
+    .select-container,
+    .start-container {
+      width: 2.2rem;
+      height: 2.2rem;
+      position: absolute;
+      left: 14.6rem;
+      top: 30rem;
+      &:after {
+        width: 3.8rem;
+        height: 3.8rem;
+      }
+    }
+
+    .start-container {
+      left: 19.8rem;
+    }
+
+    .select-button,
+    .start-button {
+      position: absolute;
+      height: 1.8rem;
+      width: 1.8rem;
+      left: calc(50% - 0.45rem);
+      top: calc(50% - 0.45rem);
+      &:after {
+        height: 1.4rem;
+        width: 1.4rem;
+        top: 0.2rem;
+        left: 0.2rem;
+      }
+    }
+
+    .a-button:active {
+      background-color: lighten(#333, 40%);
+    }
+
+    .select-label,
+    .start-label {
+      position: absolute;
+      font-family: Impact, Charcoal, sans-serif;
+      font-size: 1.2rem;
+      left: 14.8rem;
+      bottom: 5.6rem;
+      color: darken(#2222ff, 15%);
+      z-index: 2;
+    }
+
+    .start-label {
+      left: 20.2rem;
+    }
+
+    .start-label + .start-label {
+      left: 20.1rem;
+      bottom: 5.7rem;
+      color: lighten(#2222ff, 10%);
+      z-index: 1;
+    }
+
+    .select-label + .select-label {
+      color: lighten(#2222ff, 10%);
+      left: 14.7rem;
+      bottom: 5.7rem;
+      z-index: 1;
+    }
+
+    .power-light {
+      position: absolute;
+      width: 1.4rem;
+      height: 1.2rem;
+      background-color: #333;
+      right: -0.4rem;
+      top: 5rem;
+    }
+
+    .power-light + .power-light {
+      top: 8rem;
+    }
+  }
+}
+
+@media (min-width: 480px) {
+  html {
+    font-size: 1.5vw;
+  }
+}
+
+@media (min-width: 600px) {
+  html {
+    font-size: 1.2vw;
+  }
+}
+
+@media (min-width: 720px) {
+  html {
+    font-size: 0.8vw;
+  }
+}
+
+@media (min-width: 1080px) {
+  html {
+    font-size: 0.5vw;
+  }
+}
+
+@media (min-width: 1600px) {
+  html {
+    font-size: 0.35vw;
+  }
+}
