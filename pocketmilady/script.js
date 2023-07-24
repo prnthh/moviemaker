@@ -83,7 +83,7 @@
 
         scene.add(model);
 
-        loaderAnim.remove();
+        loaderAnim?.remove();
 
         mixer = new THREE.AnimationMixer(model);
 
