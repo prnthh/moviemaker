@@ -2,12 +2,18 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { FBXLoader } from "three/addons/loaders/FBXLoader.js";
 import { FontLoader } from "three/addons/loaders/FontLoader.js";
-import { animsToLoad, words } from "./constants.js";
+import {
+  SampleMeanYoutubeComments,
+  animsToLoad,
+  sampleUsernames,
+  words,
+  charactersToLoad,
+} from "./constants.js";
 
 export function drawRoom(
   name,
   scene,
-  wallColor = "0xc99dc7",
+  wallColor = "0xfff59e",
   floor = "0x662c07"
 ) {
   var loader = new GLTFLoader();
@@ -127,6 +133,20 @@ export function drawCharacter(characters, name, scene, modelToLoad = "Milady") {
       }
       console.log(c.name);
 
+      if (c.isMesh) {
+        // Assuming the texture is a map, you might also have to replace other types of maps
+        // (e.g., bumpMap, normalMap, specularMap) depending on your specific needs
+        if (c.material.map) {
+          // Step 3: Load the New Texture
+          const textureLoader = new THREE.TextureLoader();
+          const newTexture = textureLoader.load("assets/images/skin1.png");
+
+          // Step 4: Replace the Texture
+          c.material.map = newTexture;
+          c.material.needsUpdate = true; // Notify Three.js that material properties have changed
+        }
+      }
+
       // Reference the neck and waist bones
       if (c.isBone && c.name === "mixamorigNeck") {
         neck = c;
@@ -140,7 +160,8 @@ export function drawCharacter(characters, name, scene, modelToLoad = "Milady") {
     const mixer = new THREE.AnimationMixer(fbx);
     const animations = {};
 
-    animsToLoad.forEach((animFile) => {
+    charactersToLoad[modelToLoad]?.anims.forEach((animFile) => {
+      console.log("playing anim ", animFile);
       animLoader.setPath(assetPath + modelToLoad + "/anims/");
       try {
         animLoader.load(animFile + ".fbx", (anim) => {
@@ -185,7 +206,7 @@ export function drawText(
 ) {
   const loader = new FontLoader();
   loader.load("fonts/helvetiker_regular.typeface.json", function (font) {
-    const color = 0xebff38;
+    const color = 0xf4ff1c;
 
     const matDark = new THREE.LineBasicMaterial({
       color: color,
@@ -216,6 +237,7 @@ export function drawText(
     text.position.z = position.z;
     text.position.x = position.x;
     text.position.y = 2.2;
+    text.scale.set(0.25, 0.25, 0.25);
     scene.add(text);
 
     // destroy in two seconds
@@ -330,7 +352,7 @@ function getMouseDegrees(x, y, degreeLimit) {
 
 export function drawLight(position, rotation, intensity, scene) {
   // const light = new THREE.DirectionalLight("lightyellow", intensity);
-  const light = new THREE.PointLight("lightyellow", intensity);
+  const light = new THREE.SpotLight("white", intensity);
   light.castShadow = true;
   light.position.copy(position);
   light.rotation.copy(rotation);
@@ -338,7 +360,7 @@ export function drawLight(position, rotation, intensity, scene) {
 
   return;
   // add a box at light2
-  const geometry = new THREE.BoxGeometry(1, 2, 3);
+  const geometry = new THREE.CylinderGeometry(1, 2, 3);
   const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
   const cube = new THREE.Mesh(geometry, material);
   cube.position.copy(position);
@@ -370,6 +392,7 @@ export function printToSubtitles(text, duration = 2000) {
   const interval = setInterval(() => {
     if (wordIndex >= words.length) {
       clearInterval(interval);
+      subtitles.innerHTML = "";
     } else {
       word = words[wordIndex];
       subtitles.innerHTML += word + " ";
@@ -386,6 +409,18 @@ export function processTextbox(e) {
   }
 }
 
+export function printRandomChat() {
+  printToChat(
+    sampleUsernames[Math.floor(Math.random() * sampleUsernames.length)],
+    SampleMeanYoutubeComments[
+      Math.floor(Math.random() * SampleMeanYoutubeComments.length)
+    ]
+  );
+
+  if (window.tiktok_mode)
+    setTimeout(printRandomChat, Math.random() * 1000 + 400);
+}
+
 // export function generateInstructions(characters) {
 //   // generate random xy coordinate
 //   const x = Math.floor((-0.5 + Math.random()) * 10);
@@ -397,10 +432,13 @@ export function processTextbox(e) {
 // }
 
 export function generateInstructions(characters) {
+  const phrase = words[Math.floor(Math.random() * words.length)];
+  const length_per_word = 300;
+
   const instructions = [
     // `go milady1 ${x + "," + y} ${duration}`,
     // `sleep ${duration}`,
-    `say milady1 3000 ${words[Math.floor(Math.random() * words.length)]}`,
+    `say milady1 ${phrase.split(" ").length * length_per_word} ${phrase}`,
     `do milady1 ${animsToLoad[Math.floor(Math.random() * animsToLoad.length)]}`,
     `sleep 3000`,
   ];
