@@ -63,9 +63,9 @@ export default class SceneManager {
 
     clock = new THREE.Clock();
 
-    composer = new EffectComposer(renderer);
-    const renderPixelatedPass = new RenderPixelatedPass(6, scene, camera);
-    composer.addPass(renderPixelatedPass);
+    // composer = new EffectComposer(renderer);
+    // const renderPixelatedPass = new RenderPixelatedPass(6, scene, camera);
+    // composer.addPass(renderPixelatedPass);
 
     window.addEventListener("resize", this.onWindowResize);
     setTimeout(this.onWindowResize, 1);
@@ -89,7 +89,7 @@ export default class SceneManager {
       // depthEdgeStrength: 0.4,
       // pixelAlignedPanning: true,
     };
-    renderPixelatedPass.setPixelSize(params.pixelSize);
+    // renderPixelatedPass.setPixelSize(params.pixelSize);
 
     gui
       .add(params, "pixelSize")
@@ -153,7 +153,7 @@ export default class SceneManager {
     camera.updateProjectionMatrix();
 
     renderer.setSize(sceneWidth, sceneHeight);
-    composer.setSize(sceneWidth, sceneHeight);
+    // composer.setSize(sceneWidth, sceneHeight);
   }
 
   initInstructions() {
@@ -186,8 +186,6 @@ function animate() {
   camera.top = 1.0;
   camera.bottom = -1.0;
 
-  var character = Object.values(characters)[0];
-
   // if (character != undefined) {
   //   controls.target = character.group.position;
   //   controls.update();
@@ -202,7 +200,8 @@ function animate() {
     Object.values(characters).map((character) => character.mixer.update(delta));
   }
 
-  composer.render();
+  // composer.render();
+  renderer.render(scene, camera);
   requestAnimationFrame(animate);
 }
 

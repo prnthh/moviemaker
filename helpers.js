@@ -118,7 +118,7 @@ function assignImageTextureToNode(node, image) {
 
 const assetPath = "./assets/models/";
 export function drawCharacter(characters, name, scene, modelToLoad = "Milady") {
-  let neck, waist;
+  let neck, waist, mouth, skin;
   const group = new THREE.Group();
 
   const loader = new FBXLoader();
@@ -136,15 +136,20 @@ export function drawCharacter(characters, name, scene, modelToLoad = "Milady") {
       if (c.isMesh) {
         // Assuming the texture is a map, you might also have to replace other types of maps
         // (e.g., bumpMap, normalMap, specularMap) depending on your specific needs
-        if (c.material.map) {
-          // Step 3: Load the New Texture
-          const textureLoader = new THREE.TextureLoader();
-          const newTexture = textureLoader.load("assets/images/skin1.png");
-
-          // Step 4: Replace the Texture
-          c.material.map = newTexture;
-          c.material.needsUpdate = true; // Notify Three.js that material properties have changed
-        }
+        c.material.forEach((mat) => {
+          mat.shininess = 0.1;
+          if (mat.name == "Skin" && mat.map) {
+            // Step 3: Load the New Texture
+            skin = mat;
+            const textureLoader = new THREE.TextureLoader();
+            const newTexture = textureLoader.load("assets/images/skin1.png");
+            // Step 4: Replace the Texture
+            mat.map = newTexture;
+            mat.needsUpdate = true; // Notify Three.js that material properties have changed
+          } else if (mat.name == "Mouth" && mat.map) {
+            mouth = mat;
+          }
+        });
       }
 
       // Reference the neck and waist bones
@@ -183,12 +188,28 @@ export function drawCharacter(characters, name, scene, modelToLoad = "Milady") {
     characters[name] = {
       neck: neck,
       waist: waist,
+      mouth: mouth,
+      skin: skin,
       group: group,
       mixer: mixer,
       animations: animations,
       currentAnimation: null, // Add this line
     };
+
+    setCharacterMouth(characters, name);
   });
+}
+
+export function setCharacterMouth(characters, name, mouth) {
+  const mat = characters[name].mouth;
+
+  // Step 3: Load the New Texture
+  const textureLoader = new THREE.TextureLoader();
+  const newTexture = textureLoader.load("assets/images/mouth1.png");
+  mat.alphaMap = newTexture.alphaMap;
+  // Step 4: Replace the Texture
+  mat.map = newTexture;
+  mat.needsUpdate = true;
 }
 
 export function moveJoint(mouse, joint, degreeLimit) {
