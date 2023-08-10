@@ -17,6 +17,7 @@ import {
   printToSubtitles,
   rotateToFace,
   sayHello,
+  setCharacterMouth,
   switchAnimation,
 } from "../helpers.js";
 
@@ -136,6 +137,9 @@ export default class SceneManager {
     });
     renderer.shadowMap.enabled = true;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
+    // fix color management
+    renderer.physicallyCorrectLights = true;
+
     renderer.outputEncoding = THREE.sRGBEncoding;
     renderer.gammaFactor = 2.2;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -164,12 +168,12 @@ export default class SceneManager {
   }
 
   addLighting() {
-    const light = new THREE.AmbientLight(0xffffff, 1); // soft white light
+    const light = new THREE.AmbientLight(0xffffff, 1.5); // soft white light
     scene.add(light);
     drawLight(
       new THREE.Vector3(0, 6, 12),
       new THREE.Euler(Math.PI, -Math.PI / 2, Math.PI / 6),
-      0.1,
+      100,
       scene
     );
   }
@@ -260,6 +264,10 @@ function processInstruction() {
         character.group.position,
         actionDuration
       );
+      // setCharacterMouth(character);
+      // setTimeout(function () {
+      //   setCharacterMouth(character, "mouth2");
+      // }, actionDuration);
       printToSubtitles(parts.slice(3).join(" "), actionDuration);
       break;
     case "move":
@@ -321,4 +329,60 @@ document.addEventListener("mousemove", function (e) {
 });
 function getMousePos(e) {
   return { x: e.clientX, y: e.clientY };
+}
+
+// Check if the browser supports the Web Audio API
+if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  const constraints = { audio: true };
+
+  // Replace this with your function to set the character's mouth position
+
+  // Request access to the user's microphone
+  navigator.mediaDevices
+    .getUserMedia(constraints)
+    .then(function (stream) {
+      const audioContext = new (window.AudioContext ||
+        window.webkitAudioContext)();
+      const analyser = audioContext.createAnalyser();
+      const microphone = audioContext.createMediaStreamSource(stream);
+
+      // Connect the microphone to the analyser
+      microphone.connect(analyser);
+
+      // Set up analyser parameters
+      analyser.fftSize = 256;
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+
+      // Function to adjust character's mouth based on sound level
+      function adjustMouthBasedOnSound() {
+        analyser.getByteFrequencyData(dataArray);
+
+        let sum = 0;
+        for (let i = 0; i < bufferLength; i++) {
+          sum += dataArray[i];
+        }
+
+        // Calculate the average value of the frequency data
+        const average = sum / bufferLength;
+
+        // Map the average value to the mouth position range (0 to 4)
+        const mouthPosition = Math.min(3, Math.floor((average / 50) * 5));
+
+        // Set the character's mouth position
+        characters["milady1"] &&
+          setCharacterMouth(characters["milady1"], `mouth${mouthPosition}`);
+
+        // Call the function again to keep updating the mouth position
+        requestAnimationFrame(adjustMouthBasedOnSound);
+      }
+
+      // Start adjusting the character's mouth
+      adjustMouthBasedOnSound();
+    })
+    .catch(function (error) {
+      console.error("Error accessing microphone:", error);
+    });
+} else {
+  console.error("Web Audio API is not supported in this browser");
 }

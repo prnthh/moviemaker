@@ -196,16 +196,18 @@ export function drawCharacter(characters, name, scene, modelToLoad = "Milady") {
       currentAnimation: null, // Add this line
     };
 
-    setCharacterMouth(characters, name);
+    // setCharacterMouth(characters, name);
   });
 }
 
-export function setCharacterMouth(characters, name, mouth) {
-  const mat = characters[name].mouth;
+export function setCharacterMouth(character, mouth = "mouth1") {
+  const mat = character.mouth;
+  if (!mat || mat.currentMouth == mouth) return;
+  mat.currentMouth = mouth;
 
   // Step 3: Load the New Texture
   const textureLoader = new THREE.TextureLoader();
-  const newTexture = textureLoader.load("assets/images/mouth1.png");
+  const newTexture = textureLoader.load(`assets/images/${mouth}.png`);
   mat.alphaMap = newTexture.alphaMap;
   // Step 4: Replace the Texture
   mat.map = newTexture;
