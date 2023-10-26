@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
-import { RenderPixelatedPass } from "three/addons/postprocessing/RenderPixelatedPass.js";
+// import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+// import { RenderPixelatedPass } from "three/addons/postprocessing/RenderPixelatedPass.js";
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import {
   drawCharacter,
@@ -78,7 +78,7 @@ export default class SceneManager {
     // controls.enableZoom = false;
 
     this.addLighting();
-    drawRoom("room", scene);
+    // drawRoom("room", scene);
     // gui
 
     gui = new GUI();
