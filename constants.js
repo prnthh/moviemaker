@@ -1,5 +1,5 @@
 export const initialInstructions = [
-  "character milady1 MiladyShort",
+  "character milady1 MiladyTshirt",
   "sleep 500",
   // "go milady1 0,8 1500",
   // "sleep 1500",
@@ -38,6 +38,11 @@ export const charactersToLoad = {
       "No",
       "Sleep",
     ],
+    scale: 0.1,
+  },
+  MiladyTshirt: {
+    anims: ["Idle", "Floating"],
+    scale: 0.03,
   },
 };
 

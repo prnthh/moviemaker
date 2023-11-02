@@ -4,22 +4,23 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 // import { RenderPixelatedPass } from "three/addons/postprocessing/RenderPixelatedPass.js";
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import {
-  drawCharacter,
-  drawLight,
   drawRoom,
   drawText,
   generateInstructions,
   goToBed,
-  moveJoint,
-  printRandomChat,
   printToChat,
   printToLogs,
   printToSubtitles,
-  rotateToFace,
   sayHello,
+} from "../helpers.js";
+
+import {
+  drawCharacter,
+  moveJoint,
+  rotateToFace,
   setCharacterMouth,
   switchAnimation,
-} from "../helpers.js";
+} from "./actor.js";
 
 import {
   SampleMeanYoutubeComments,
@@ -35,13 +36,12 @@ var objects = {};
 var mixers = [];
 var instructions = [];
 
+var directionalLight, pointLight;
+
 var aspectRatio;
 
 export default class SceneManager {
   constructor() {
-    THREE.ColorManagement.enabled = true;
-    THREE.ColorManagement.legacyMode = false;
-
     this.init();
     animate();
     this.initInstructions();
@@ -49,6 +49,7 @@ export default class SceneManager {
 
   init() {
     THREE.ColorManagement.enabled = false;
+    // THREE.ColorManagement.legacyMode = false;
 
     const loadingManager = new THREE.LoadingManager(() => {
       const loadingScreen = document.getElementById("loading-screen");
@@ -58,29 +59,22 @@ export default class SceneManager {
       loadingScreen.addEventListener("transitionend", onTransitionEnd);
     });
 
+    // scene logistics
     this.initialiseCamera();
     scene = new THREE.Scene();
-    // scene.background = new THREE.Color(0x000000);
-
     clock = new THREE.Clock();
+    window.addEventListener("resize", this.onWindowResize);
+    setTimeout(this.onWindowResize, 1);
 
     // composer = new EffectComposer(renderer);
     // const renderPixelatedPass = new RenderPixelatedPass(6, scene, camera);
     // composer.addPass(renderPixelatedPass);
 
-    window.addEventListener("resize", this.onWindowResize);
-    setTimeout(this.onWindowResize, 1);
-
-    controls = new OrbitControls(camera, renderer.domElement);
-    controls.enablePan = false;
-    controls.target = new THREE.Vector3(0, -1, 0);
-    controls.update();
-    // controls.enableZoom = false;
-
     this.addLighting();
-    // drawRoom("room", scene);
-    // gui
+    drawRoom("room", scene);
+    // scene.background = new THREE.Color(0x00ee00);
 
+    // gui
     gui = new GUI();
     params = {
       pixelSize: 2,
@@ -107,7 +101,7 @@ export default class SceneManager {
 
     gui.add(params, "tiktok_mode").onChange(() => {
       window.tiktok_mode = params.tiktok_mode;
-      printRandomChat();
+      // printRandomChat();
     });
   }
 
@@ -125,11 +119,10 @@ export default class SceneManager {
       100
     );
     // camera.position.y = -0.2;
-    camera.position.z = 8;
-    camera.position.y = 1;
+    camera.position.z = 40;
+    camera.zoom = 0.6;
+    camera.position.y = 0;
     // camera.rotation.x = Math.PI * 1;
-    camera.rotation.y = Math.PI * 0.5;
-    camera.zoom = 0.2;
 
     renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -145,6 +138,13 @@ export default class SceneManager {
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setClearColor(0xffffff, 0);
+
+    // camera controls
+    controls = new OrbitControls(camera, renderer.domElement);
+    controls.enablePan = false;
+    controls.target = new THREE.Vector3(0, 0, 0);
+    controls.update();
+    // controls.enableZoom = false;
   }
 
   onWindowResize() {
@@ -168,14 +168,23 @@ export default class SceneManager {
   }
 
   addLighting() {
-    const light = new THREE.AmbientLight(0xffffff, 1.5); // soft white light
-    scene.add(light);
-    drawLight(
-      new THREE.Vector3(0, 6, 12),
-      new THREE.Euler(Math.PI, -Math.PI / 2, Math.PI / 6),
-      100,
-      scene
-    );
+    pointLight = new THREE.PointLight(0xffffff, 50, 100);
+    pointLight.position.set(-4, 0, 6);
+    scene.add(pointLight);
+    this.angle = 0;
+
+    // directionalLight = new THREE.AmbientLight(0x404040);
+    directionalLight = new THREE.HemisphereLight(0xffffff, 0xf0f0f0, 1.5);
+    scene.add(directionalLight);
+
+    // const light = new THREE.AmbientLight(0xffffff, 1.5); // soft white light
+    // scene.add(light);
+    // drawLight(
+    //   new THREE.Vector3(0, 6, 12),
+    //   new THREE.Euler(Math.PI, -Math.PI / 2, Math.PI / 6),
+    //   100,
+    //   scene
+    // );
   }
 
   addInstructionToQueue(instruction) {}
@@ -189,11 +198,6 @@ function animate() {
   camera.right = aspectRatio;
   camera.top = 1.0;
   camera.bottom = -1.0;
-
-  // if (character != undefined) {
-  //   controls.target = character.group.position;
-  //   controls.update();
-  // }
 
   camera.updateProjectionMatrix();
 
@@ -268,7 +272,32 @@ function processInstruction() {
       // setTimeout(function () {
       //   setCharacterMouth(character, "mouth2");
       // }, actionDuration);
-      printToSubtitles(parts.slice(3).join(" "), actionDuration);
+      break;
+      var text = parts.slice(3).join(" ");
+      const speak = new SpeechSynthesisUtterance(text);
+      speak.voice = speechSynthesis.getVoices()[3];
+      speak.onboundary = function (event) {
+        if (event.name === "word") {
+          // get this character
+          var character = event.target.text.split(" ")[event.charIndex];
+          if (["a", "e", "i", "o", "u"].includes(character)) {
+            // Set the character's mouth position
+            characters["milady1"] &&
+              setCharacterMouth(characters["milady1"], `mouth${3}`);
+            console.log("mouth2");
+          }
+          // Close the mouth at the end of a word (based on word length)
+          else {
+            setCharacterMouth(characters["milady1"], `mouth${1}`);
+          }
+        }
+      };
+      speak.onend = function (event) {
+        setCharacterMouth(characters["milady1"], `mouth${0}`);
+      };
+      speechSynthesis.speak(speak);
+      const subtitles = document.getElementById("subtitles");
+      subtitles.innerHTML = text;
       break;
     case "move":
       var name = parts[1];
@@ -332,7 +361,7 @@ function getMousePos(e) {
 }
 
 // Check if the browser supports the Web Audio API
-if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+if (false && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
   const constraints = { audio: true };
 
   // Replace this with your function to set the character's mouth position
@@ -384,5 +413,5 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       console.error("Error accessing microphone:", error);
     });
 } else {
-  console.error("Web Audio API is not supported in this browser");
+  // console.error("Web Audio API is not supported in this browser");
 }
