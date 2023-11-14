@@ -19,21 +19,21 @@ export function drawRoom(
   var loader = new GLTFLoader();
 
   loader.load(
-    "./pocketmilady/room3.glb",
+    "./assets/rooms/room1.glb",
     function (gltf) {
       var model = gltf.scene;
 
       model.traverse(function (node) {
         // reduce the brightness of the lights
         if (node.isPlane) {
-          node.receiveShadow = true;
-          node.castShadow = true;
+          // node.receiveShadow = true;
+          // node.castShadow = true;
           node.material.color.setHex(floor);
         }
 
         if (node.isMesh) {
-          node.castShadow = true;
-          node.receiveShadow = true;
+          // node.castShadow = true;
+          // node.receiveShadow = true;
 
           console.log(node.name);
 
@@ -45,14 +45,14 @@ export function drawRoom(
           if (node.name == "Node-Mesh_1")
             node.material.color.setHex(secondaryColor);
 
-          if (node.name == "Plane")
-            assignImageTextureToNode(
-              node,
-              "https://pbs.twimg.com/media/F1pXvFsWIAE6yc9?format=png&name=900x900"
-            );
+          // if (node.name == "Plane")
+          //   assignImageTextureToNode(
+          //     node,
+          //     "https://pbs.twimg.com/media/F1pXvFsWIAE6yc9?format=png&name=900x900"
+          //   );
 
-          if (node.name == "Plane001")
-            assignImageTextureToNode(node, "../assets/images/background.jpg");
+          // if (node.name == "Plane001")
+          //   assignImageTextureToNode(node, "./assets/images/background.jpg");
           node.receiveShadow = true;
 
           if (node.name == "Node-Mesh_6") node.material.color.setHex(floor);
@@ -247,8 +247,7 @@ export function drawText(
 //   const duration = distance * 250;
 // }
 
-export function generateInstructions(characters) {
-  const phrase = words[Math.floor(Math.random() * words.length)];
+export function generateSpeechInstructions(phrase) {
   const length_per_word = 300;
 
   const instructions = [

@@ -38,7 +38,7 @@ export function drawCharacter(characters, name, scene, modelToLoad = "Milady") {
               // Step 3: Load the New Texture
               skin = mat;
               const textureLoader = new THREE.TextureLoader();
-              const newTexture = textureLoader.load("assets/images/skin6.png");
+              const newTexture = textureLoader.load("assets/images/skin7.png");
               // Step 4: Replace the Texture
               mat.map = newTexture;
               mat.needsUpdate = true; // Notify Three.js that material properties have changed
@@ -55,11 +55,11 @@ export function drawCharacter(characters, name, scene, modelToLoad = "Milady") {
       if (c.isBone && c.name === "mixamorigHead") {
         var loader = new GLTFLoader();
 
-        loader.load("./assets/props/heartglasses.glb", function (gltf) {
+        loader.load("./assets/props/truckercap.glb", function (gltf) {
           var model = gltf.scene;
           model.scale.setScalar(9);
           model.position.y = 20;
-          model.position.z = 20;
+          model.position.z = 22;
           c.add(model);
         });
       }

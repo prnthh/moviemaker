@@ -6,7 +6,7 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import {
   drawRoom,
   drawText,
-  generateInstructions,
+  generateSpeechInstructions,
   goToBed,
   printToChat,
   printToLogs,
@@ -115,13 +115,14 @@ export default class SceneManager {
       aspectRatio,
       1,
       -1,
-      -10,
+      0.1,
       100
     );
     // camera.position.y = -0.2;
-    camera.position.z = 40;
+    camera.target = new THREE.Vector3(0, 0, 0);
+    camera.position.z = 20;
+    camera.position.y = 3;
     camera.zoom = 0.6;
-    camera.position.y = 0;
     // camera.rotation.x = Math.PI * 1;
 
     renderer = new THREE.WebGLRenderer({
@@ -142,7 +143,7 @@ export default class SceneManager {
     // camera controls
     controls = new OrbitControls(camera, renderer.domElement);
     controls.enablePan = false;
-    controls.target = new THREE.Vector3(0, 0, 0);
+    controls.target = new THREE.Vector3(0, -0.5, 0);
     controls.update();
     // controls.enableZoom = false;
   }
@@ -167,14 +168,26 @@ export default class SceneManager {
     }, 1000);
   }
 
+  setInstructions(newInstructions) {
+    console.log("newInstructions", newInstructions);
+    instructions = newInstructions;
+    console.log("instructions", instructions);
+  }
+
+  getCharacters() {
+    return characters;
+  }
+
   addLighting() {
-    pointLight = new THREE.PointLight(0xffffff, 50, 100);
+    pointLight = new THREE.PointLight(0xffffff, 70, 0);
     pointLight.position.set(-4, 0, 6);
+    pointLight.castShadow = true;
+    pointLight.shadow.radius = 4;
     scene.add(pointLight);
     this.angle = 0;
 
     // directionalLight = new THREE.AmbientLight(0x404040);
-    directionalLight = new THREE.HemisphereLight(0xffffff, 0xf0f0f0, 1.5);
+    directionalLight = new THREE.HemisphereLight(0xffffff, 0x101010, 1.2);
     scene.add(directionalLight);
 
     // const light = new THREE.AmbientLight(0xffffff, 1.5); // soft white light
@@ -216,9 +229,25 @@ function animate() {
 function processInstruction() {
   if (instructions.length === 0) {
     if (window.tiktok_mode) {
-      instructions = [...generateInstructions(characters)];
+      instructions = [...generateSpeechInstructions()];
     } else {
+      //   // generate random xy coordinate
+      // const x = Math.floor((-0.5 + Math.random()) * 10);
+      // const y = Math.floor(-0.5 + Math.random() * 10);
+
+      // const currentPos = characters["milady1"].group.position;
+      // const distance = Math.sqrt(
+      //   (currentPos.x - x) ** 2 + (currentPos.z - y) ** 2
+      // );
+      // const duration = distance * 250;
       instructions = ["do milady1 Idle", "sleep 2000"];
+      // instructions = [
+      //   `do milady1 Floating`,
+      //   `go milady1 ${x + "," + y} ${duration}`,
+      //   `sleep ${duration}`,
+      //   `do milady1 Idle`,
+      //   `sleep 3000`,
+      // ];
     }
     setTimeout(function () {
       processInstruction();
@@ -262,20 +291,21 @@ function processInstruction() {
       var actionDuration = parts[2];
       var character = characters[name];
       if (character === undefined) break;
+      console.log("saying", parts.slice(3).join(" "));
       drawText(
         scene,
         parts.slice(3).join(" "),
         character.group.position,
         actionDuration
       );
-      // setCharacterMouth(character);
+      setCharacterMouth(character);
       // setTimeout(function () {
       //   setCharacterMouth(character, "mouth2");
       // }, actionDuration);
-      break;
+      // break;
       var text = parts.slice(3).join(" ");
       const speak = new SpeechSynthesisUtterance(text);
-      speak.voice = speechSynthesis.getVoices()[3];
+      speak.voice = speechSynthesis.getVoices()[15];
       speak.onboundary = function (event) {
         if (event.name === "word") {
           // get this character
@@ -296,8 +326,7 @@ function processInstruction() {
         setCharacterMouth(characters["milady1"], `mouth${0}`);
       };
       speechSynthesis.speak(speak);
-      const subtitles = document.getElementById("subtitles");
-      subtitles.innerHTML = text;
+      printToChat("Milady", text);
       break;
     case "move":
       var name = parts[1];

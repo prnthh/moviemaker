@@ -7,6 +7,7 @@
   name="viewport"
   content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
   />
+  <link rel="stylesheet" href="./style.css" />
   
   <script
   async
@@ -33,16 +34,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/20.0.0/tween.umd.js"></script>
   <script type="module" src="helpers.js"></script>
   <script type="module" src="constants.js"></script>
-  <link rel="stylesheet" href="./style.css" />
 </head>
 
 <body
-style="
-margin: 0px;
-text-align: center;
-height: 100vh;
-overflow: hidden;
-"
+style="margin: 0px; text-align: center; height: 100vh; overflow: hidden"
 >
 <div
 style="
@@ -54,72 +49,118 @@ align-items: center;
 background-color: lightpink;
 "
 >
-
 <canvas
-style="border-radius: 5px; background-color: rgb(162, 179, 162); height: 95%; width: 95%;"
+style="
+border-radius: 5px;
+background-color: rgb(162, 179, 162);
+height: 95%;
+width: 95%;
+"
 id="threeCanvas"
 >
 loading...
-
 </canvas>
 
-<div style="color:white; position:absolute; bottom: 5%; left: 50%; transform: translate(-50%, 0);">
-  <div style="display: flex; flex-direction: column; align-items: center;">
+<div
+style="
+color: white;
+position: absolute;
+bottom: 5%;
+left: 50%;
+transform: translate(-50%, 0);
+width: 75%;
+"
+>
+<div style="display: flex; flex-direction: column; align-items: center">
+  <div id="menu"
+  onmouseenter="openMenu()"
+  onmouseleave="closeMenu()"
+  >
+  <div id="status-bar">
     
-    
-    
-    <div id="menu" onmouseenter="openMenu()" onmouseleave="closeMenu()" style="overflow:hidden; width: 80%; background-color: rgba(255, 255, 255, 0.75); height:20px; transition: height 0.5s; border-radius: 10px 10px 0px 0px; padding: 5px; ">
-      ^
-      
-      <div id="subtitles" style="text-align: left; border: 2px solid grey; background-color: white; color: rgb(100, 39, 80);">
-        this is where dialogue would be</div>
-        <div id="chat" style="text-align: left; background: rgba(9, 9, 9, 0.2); max-height: 100px; overflow-y: auto; width: 55vh; font-size: 0.9rem;">        
-        </div>
-        <div id="terminal" style="text-align: left; background: rgba(9, 9, 9, 0.2); max-height: 100px; overflow-y: auto; width: 55vh;">
-        </div>
-        <input id="instruction" style=""></input>
-        
-        <button type="button" class="nes-btn" id="console-button-rest">
-          
-        </button>
-        <button type="button" class="nes-btn" id="console-button-chill">
-          
-        </button>
-        <button type="button" class="nes-btn" id="console-button-post">
-          
-        </button>
-        <button   onclick="window.open(document.URL, '_blank', 'location=yes,height=680,width=680,scrollbars=yes,status=yes');"
-        >
-        Pop Out
+  </div>
+  
+  
+  
+  <div style="display: flex; max-height:160px;">
+    <div class="column">
+      <button type="button" class="nes-btn" id="console-chatMode">
+        Chat
       </button>
-      </div>
-      <div style="width: 100%; height: 4vh; padding: 4px; display:flex; background-image: radial-gradient(transparent, transparent, white); border-radius: 16px;">
-        <div style="height: 100%; width:50%; background-color: rgba(164, 211, 255, 0.499); border-radius: 12px;">
-          progress
-        </div>
-        <div style="height: 100%; width:50%; background-color: rgba(255, 169, 242, 0.499); border-radius: 12px;">
-          progress
-        </div>
-      </div>
-      
-      
-      
-      
-      
+      <button type="button" class="nes-btn" id="console-radioMode">
+        Radio
+      </button>
+      <button type="button" class="nes-btn" id="console-galleryMode">
+        Gallery
+      </button>
+
+
+      <div
+      onclick="window.open(document.URL, '_blank', 'location=yes,height=680,width=680,scrollbars=yes,status=yes');"
+      >
+      <svg
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      stroke-width="2px"
+      viewBox="0 0 24 24"
+      height="1.4em"
+      width="2em"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" />
+      <path d="M21 12v3a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1h9M7 20h10M9 16v4M15 16v4M17 4h4v4M16 9l5-5" />
+    </svg>
     </div>
   </div>
   
+  
+  <div class="grow">
+    <div id="radioMode" class="grow">
+      <div class="grow">
+        list of songs here
+      </div>
+      <div>
+        video here
+      </div>
+    </div>
+    
+    
+    <div id="galleryMode" class="grow">
+      Keep playing to unlock more photos!
+    </div>
+    
+    
+    <div id="chatMode" class="column">
+      <div id="chat">
+        
+      </div>
+      <div class="row">
+        <input id="chat-input" placeholder="type here to chat, /help for commands"></input>
+        <button id="chat-submit" type="button">
+          Send
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
 </div>
 
 <script>
   function openMenu() {
-    var menu = document.getElementById('menu');
-    menu.style.height = '200px';
+    var menu = document.getElementById("menu");
+    menu.style.height = "200px";
   }
   
   function closeMenu() {
-    var menu = document.getElementById('menu');
-    menu.style.height = '20px';
+    var menu = document.getElementById("menu");
+    menu.style.height = "20px";
   }
 </script>
 
