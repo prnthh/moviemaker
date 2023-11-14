@@ -31,6 +31,9 @@ export function drawCharacter(characters, name, scene, modelToLoad = "Milady") {
           c.material.forEach((mat) => {
             console.log("MAT");
             console.log(mat);
+
+            mat.morphTargets = true;
+            
             // mat.glossiness = 0;
 
             mat.shininess = 0.3;
@@ -39,6 +42,8 @@ export function drawCharacter(characters, name, scene, modelToLoad = "Milady") {
               skin = mat;
               const textureLoader = new THREE.TextureLoader();
               const newTexture = textureLoader.load("assets/images/skin7.png");
+              newTexture.encoding = THREE.sRGBEncoding;
+
               // Step 4: Replace the Texture
               mat.map = newTexture;
               mat.needsUpdate = true; // Notify Three.js that material properties have changed
@@ -67,6 +72,10 @@ export function drawCharacter(characters, name, scene, modelToLoad = "Milady") {
         waist = c;
       }
     });
+
+  console.log("testing morphshh");
+    console.log(fbx.morphTargetDictionary);
+
 
     const animLoader = new FBXLoader();
     const mixer = new THREE.AnimationMixer(fbx);

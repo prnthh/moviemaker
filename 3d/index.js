@@ -120,9 +120,9 @@ export default class SceneManager {
     );
     // camera.position.y = -0.2;
     camera.target = new THREE.Vector3(0, 0, 0);
-    camera.position.z = 20;
-    camera.position.y = 3;
-    camera.zoom = 0.6;
+    camera.position.z = 40;
+    camera.position.y = 2;
+    camera.zoom = 0.3;
     // camera.rotation.x = Math.PI * 1;
 
     renderer = new THREE.WebGLRenderer({
@@ -143,7 +143,7 @@ export default class SceneManager {
     // camera controls
     controls = new OrbitControls(camera, renderer.domElement);
     controls.enablePan = false;
-    controls.target = new THREE.Vector3(0, -0.5, 0);
+    controls.target = new THREE.Vector3(0, -1.2, 0);
     controls.update();
     // controls.enableZoom = false;
   }
