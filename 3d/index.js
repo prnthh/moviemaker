@@ -187,7 +187,7 @@ export default class SceneManager {
     this.angle = 0;
 
     // directionalLight = new THREE.AmbientLight(0x404040);
-    directionalLight = new THREE.HemisphereLight(0xffffff, 0x101010, 1.2);
+    directionalLight = new THREE.HemisphereLight(0xffffff, 0x101010, 2);
     scene.add(directionalLight);
 
     // const light = new THREE.AmbientLight(0xffffff, 1.5); // soft white light

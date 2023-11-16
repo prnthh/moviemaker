@@ -5,63 +5,89 @@ import bisect
 # Higher numbers mean the attribute is more common.
 attributes = {
     'hat': [
-        ('trucker anime', 50),  # Common
-        ('maid hat', 30),   # Uncommon
-        ('trucker im soo', 15),  # Rare
-        ('plaid bonnet', 4),    # Epic
-        ('pink bonnet', 1),   # Legendary
-        ('backwards trucker pink', 1),   # Legendary
-        ('blue pink bow', 1),   # Legendary
-        ('shy saints cap', 1),   # Legendary
-        ('trucker construction', 1),   # Legendary
-        ('cake hat', 1),   # Legendary
-        ('aloha visor', 1),   # Legendary
-        ('dubai hat', 1),   # Legendary
-        ('orange beret', 1),   # Legendary
-        ('fez', 1),   # Legendary
-        ('white cowboy', 1),   # Legendary
-        ('strawberry', 1),   # Legendary
-        ('cake', 1),   # Legendary
-        ('alien hat', 1),   # Legendary
-        ('halo', 1),   # Legendary
+        ('none', 40), 
+        ('trucker anime', 50),  # done
+        ('maid hat', 30),   # done
+        ('trucker im soo', 15),  # done
+        ('plaid bonnet', 2), 
+        ('pink bonnet', 2),   
+        ('backwards trucker pink', 2), # done  
+        ('blue pink bow', 2),   
+        ('shy saints cap', 2),   
+        ('trucker construction', 2),   
+        ('cake hat', 2),   
+        ('aloha visor', 2),  
+        ('dubai hat', 2),   # done
+        ('orange beret', 2), 
+        ('fez', 2),   # done
+        ('white cowboy', 2),   
+        ('brown cowboy', 2),   # done
+        ('strawberry', 2),   
+        ('cake', 2), 
+        ('alien hat', 2),   
+        ('halo', 2),   
+    ],
+    'shirt': [
+        ('Mouse', 5),  
+        ('Blue Ribbon', 5),  
+        ('Football', 5),  
+        ('Goth Harajuku', 5),  
+        ('Hikki Condition', 5),  
+        ('Skull Sweater', 5),  
+        ('MWO', 5),  
+        ('Im Cute Im Punk', 5),  
+        ('Maf Rothko', 5),  
+        ('Maf Creeper', 5),  
+        ('Heihei', 5),  
+        ('Meline Teddy', 5),  
+        ('Active Dissident', 5),  
+        ('Cactus', 5),  
+        ('Super Lover', 5),  
+        ('Special People', 5),  
+        ('Bear', 5),  
+        ('Sweater And Tie', 5),  
     ],
     'glasses': [
-        ('round', 50),  # Common
-        ('prescription', 30),   # Uncommon
-        ('sunglasses', 15),  # Rare
-        ('harajuku', 4),    # Epic
-        ('oakleys', 1),   # Legendary
+        ('none', 50),
+        ('round', 5),  # Common
+        ('prescription', 5),   # Uncommon
+        ('sunglasses', 5),  # Rare
+        ('harajuku', 5),    # Epic
+        ('pitvipers', 5),   # Legendary
     ],
     'necklace': [
-        ('milady beads', 50),  # Common
-        ('pearl necklace', 30),   # Uncommon
-        ('cherry necklace', 4),    # Epic
-        ('smiley bead necklace', 1),   # Legendary
-        ('fliphone lanyard', 1),   # Legendary
-        ('evil eye necklace', 1),   # Legendary
-        ('ethereum necklace', 1),   # Legendary
-        ('lean neck tattoo', 1),   # Legendary
-        ('spider neck tattoo', 1),   # Legendary
-        ('castle neck tattoo', 1),   # Legendary
+        ('none', 40),
+        ('milady beads', 5),
+        ('pearl necklace', 5),
+        ('coral cross necklace', 5),
+        ('girl necklace', 5),
+        ('cherry necklace', 5),
+        ('smiley bead necklace', 5),
+        ('fliphone lanyard', 5),
+        ('evil eye necklace', 5),
+        ('ethereum necklace', 5),
+        ('lean neck tattoo', 5),
+        ('spider neck tattoo', 5),
+        ('castle neck tattoo', 5),
     ],
     'race': [
-        ('pale', 30),  # Common
-        ('clay', 30),   # Uncommon
-        ('pink', 25),  # Rare
-        ('tan', 10),    # Epic
-        ('black', 3),   # Legendary
-        ('alien', 2),   # Legendary
+        ('pale', 30),  
+        ('clay', 30),   
+        ('pink', 25),  
+        ('tan', 10),   
+        ('black', 3),  
+        ('alien', 2),  
     ],
         'hair_color': [
-        ('dark', 50),  # Common
-        ('brown', 30),  # Uncommon
-        ('green', 15), # Rare
-        ('slate', 4),     # Epic
-        ('pink', 1),    # Legendary
-        ('blonde', 1),    # Legendary
-        ('orange', 1),    # Legendary
-        ('blue', 1),    # Legendary
-        ('harajuku', 1),    # Legendary
+        ('dark', 30), 
+        ('brown', 15),  
+        ('green', 15), 
+        ('slate', 15),   
+        ('blonde', 5),   
+        ('pink', 5),   
+        ('orange', 5),  
+        ('blue', 5),   
+        ('harajuku', 5), 
     ],
     'hair_style': [
         ('long', 50),  # Common
@@ -71,39 +97,34 @@ attributes = {
         ('mohawk', 1),   # Legendary
     ],
     'face_decoration': [
-        ('none', 50),  # Common
-        ('teardrops tattoo', 30),   # Uncommon
-        ('star heart tattoo', 15),  # Rare
+        ('none', 50),
+        ('teardrops tattoo', 30),
+        ('star heart tattoo', 15),
         ('gray', 4),    # Epic
         ('face piercings', 1),   # Legendary
-        ('temple cross tattoo', 1),   # Legendary
-        ('black hearts tattoo', 1),   # Legendary
-        ('milady pilled tattoo', 1),   # Legendary
-        ('crescent tattoo', 1),   # Legendary
-        ('tyson tribal tattoo', 1),   # Legendary
-        ('gucci cone tattoo', 1),   # Legendary
-    ],
-    'eyes': [
-        ('sparkle', 50),  # Common
-        ('classic', 30),   # Uncommon
-        ('dilated', 15),  # Rare
-        ('teary', 4),    # Epic
-        ('sleepy', 1),   # Legendary
-        ('closed', 1),   # Legendary
-        ('crying', 1),   # Legendary
-        ('smug', 1),   # Legendary
-        ('spiral', 1),   # Legendary
-        ('heart eyes', 1),   # Legendary
+        ('temple cross tattoo', 1),  
+        ('black hearts tattoo', 1),
+        ('milady pilled tattoo', 1), 
+        ('crescent tattoo', 1), 
+        ('tyson tribal tattoo', 1),  
+        ('gucci cone tattoo', 1), 
     ],
     'eye_color': [
-        ('green', 50),  # Common
+        ('green', 30),  # Common
         ('blue', 30),   # Uncommon
-        ('brown', 15),  # Rare
-        ('aqua', 4),    # Epic
-        ('lilac', 1),   # Legendary
-        ('grey', 1),   # Legendary
-        ('leaf', 1),   # Legendary
+        ('brown', 25),  # Rare
+        ('aqua', 5),    # Epic
+        ('lilac', 5),   # Legendary
+        ('grey', 2),   # Legendary
+        ('leaf', 2),   # Legendary
         ('gold', 1),   # Legendary
+    ],
+    'hidden': [
+        ('none', 50),  # Common
+        ('nose blush', 30),   # Uncommon
+        ('cheek blush', 15),  # Rare
+        ('smoking', 4),    # Epic
+        ('glasses', 1),   # Legendary
     ],
 }
 

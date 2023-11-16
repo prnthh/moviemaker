@@ -36,7 +36,7 @@ export function drawCharacter(characters, name, scene, modelToLoad = "Milady") {
             
             // mat.glossiness = 0;
 
-            mat.shininess = 0.3;
+            mat.shininess =0.1;
             if (mat.name == "Skin" && mat.map) {
               // Step 3: Load the New Texture
               skin = mat;
