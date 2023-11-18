@@ -1,14 +1,10 @@
 import bpy
 import os
 import math
+import json
 
 current_dir = "/Users/prnth/Documents/GitHub/moviemaker/generation/"
 print("Current Directory:", current_dir)
-
-# Load the base model
-model_path = os.path.join(current_dir, 'model.fbx')
-print(model_path)
-bpy.ops.import_scene.fbx(filepath=model_path)
 
 def match_transformations(obj, target_obj):
     print(obj)
@@ -47,21 +43,31 @@ def replace_skin_texture(modelId):
                 if node.type == 'TEX_IMAGE':
                     if node.image:
                         bpy.data.images.remove(node.image, do_unlink=True)
-                    # Replace the image
-                    node.image = new_image
+                        # Replace the image
+                        node.image = new_image
+                        node.image.alpha_mode = 'NONE'
+                if node.type == 'BSDF_PRINCIPLED':
+                    # Disconnect the alpha link if it exists
+                    alpha_input = node.inputs['Alpha']
+                    # Iterate over the links and remove them
+                    for link in alpha_input.links:
+                        mat.node_tree.links.remove(link)
 
 def replace_from_json(json):
-    if json['hair_style'] is not None:
+    if json['hair_style'] is not None and json['hair_style'] != 'bald':
+        print(f"adding {json['hair_style']}")
         glb_file_path = f"{current_dir}props/hair_{json['hair_style'].replace(' ', '_')}.glb"
         bpy.ops.import_scene.gltf(filepath=glb_file_path)
         attach_to_head("Hairmodel", 'mixamorig:Head')
 
-    if json['glasses'] is not None:
+    if json['glasses'] is not None and json['glasses'] != 'none':
+        print(f"adding {json['glasses']}")
         glb_file_path = f"{current_dir}props/glasses_{json['glasses'].replace(' ', '_')}.glb"
         bpy.ops.import_scene.gltf(filepath=glb_file_path)
         attach_to_head("Sketchfab_model", 'mixamorig:Head')
         
-    if json['hat'] is not None:
+    if json['hat'] is not None and json['hat'] != 'none':
+        print(f"adding {json['hat']}")
         glb_file_path = f"{current_dir}props/hat_{json['hat'].replace(' ', '_')}.glb"
         bpy.ops.import_scene.gltf(filepath=glb_file_path)
         attach_to_head("Hatmodel", 'mixamorig:Head')
@@ -79,12 +85,35 @@ def write_model(modelId):
         path_mode='COPY',  # Copy all external files into the destination directory
         embed_textures=True,  # Embed textures in the FBX binary file
         bake_space_transform=False 
-    ) 
+    )
+    
+def clear_workspace():
+    # Delete all objects, including armatures
+    for obj in bpy.data.objects:
+        bpy.data.objects.remove(obj, do_unlink=True)
+
+    # Clear unused data blocks (materials, textures, etc.)
+    for block in bpy.data.materials:
+        bpy.data.materials.remove(block)
+    for block in bpy.data.armatures:
+        bpy.data.armatures.remove(block)
+    for block in bpy.data.images:
+        bpy.data.images.remove(block)
+    for block in bpy.data.meshes:
+        bpy.data.meshes.remove(block)
+    for block in bpy.data.actions:
+        bpy.data.actions.remove(block)
 
 
-json = {'hat': 'trucker im sooo', 'glasses': 'round2', 'hair_style': 'long', 'necklace': 'pearl necklace', 'shirt': 'Maf Creeper', 'race': 'clay', 'hair_color': 'dark', 'face': 'teardrops tattoo', 'eye_color': 'brown', 'hidden': 'nose blush'}
-current_model = 1
-replace_from_json(json)
-replace_skin_texture(current_model)
-write_model(current_model)
+for current_model in range(0, 5):
+    clear_workspace()
+    # Load the base model
+    model_path = os.path.join(current_dir, 'model.fbx')
+    bpy.ops.import_scene.fbx(filepath=model_path)
+    file_path = os.path.join(current_dir, f'output/{current_model}.json')
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+    replace_from_json(data)
+    replace_skin_texture(current_model)
+    write_model(current_model)
 
