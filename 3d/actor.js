@@ -37,17 +37,7 @@ export function drawCharacter(characters, name, scene, modelToLoad = "Milady") {
             // mat.glossiness = 0;
 
             mat.shininess =0.1;
-            if (mat.name == "Skin" && mat.map) {
-              // Step 3: Load the New Texture
-              skin = mat;
-              const textureLoader = new THREE.TextureLoader();
-              const newTexture = textureLoader.load("assets/images/skin7.png");
-              newTexture.encoding = THREE.sRGBEncoding;
-
-              // Step 4: Replace the Texture
-              mat.map = newTexture;
-              mat.needsUpdate = true; // Notify Three.js that material properties have changed
-            } else if (mat.name == "Mouth" && mat.map) {
+            if (mat.name == "Mouth" && mat.map) {
               mouth = mat;
             }
           });
@@ -56,17 +46,6 @@ export function drawCharacter(characters, name, scene, modelToLoad = "Milady") {
       // Reference the neck and waist bones
       if (c.isBone && c.name === "mixamorigNeck") {
         neck = c;
-      }
-      if (c.isBone && c.name === "mixamorigHead") {
-        var loader = new GLTFLoader();
-
-        loader.load("./assets/props/truckercap.glb", function (gltf) {
-          var model = gltf.scene;
-          model.scale.setScalar(9);
-          model.position.y = 20;
-          model.position.z = 22;
-          c.add(model);
-        });
       }
       if (c.isBone && c.name === "mixamorigSpine") {
         waist = c;
