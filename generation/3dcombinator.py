@@ -44,8 +44,8 @@ def replace_skin_texture(modelId):
                     if node.image:
                         bpy.data.images.remove(node.image, do_unlink=True)
                         # Replace the image
-                        node.image = new_image
-                        node.image.alpha_mode = 'NONE'
+                    node.image = new_image
+                    node.image.alpha_mode = 'NONE'
                 if node.type == 'BSDF_PRINCIPLED':
                     # Disconnect the alpha link if it exists
                     alpha_input = node.inputs['Alpha']
