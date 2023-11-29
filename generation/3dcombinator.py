@@ -15,7 +15,7 @@ def match_transformations(obj, target_obj):
     # Apply the rotations to the object
     obj.rotation_euler = (rotation_x_rad, 0, 0)
     # Match the location, rotation, and scale of the target object
-    obj.location = (0, -32, 21)
+    obj.location = (0, 6, 21)
     obj.scale = (10, 10, 10)   # target_obj.scale
     
 # Function to attach a helmet/hair to the head bone
@@ -32,16 +32,20 @@ def attach_to_head(obj_name, head_bone):
     match_transformations(obj, armature)
 
 # Replace the image texture of the 'Skin' material
-def replace_skin_texture(modelId):
+def replace_skin_texture(modelId, json):
     new_image_path = os.path.join(current_dir, f'output/{modelId}.png')
     new_image = bpy.data.images.load(new_image_path)
+    
+    print(json['mouth'])
+    
+    mouth_image_path = os.path.join(current_dir, f"image-assets/mouth_{json['mouth'].replace(' ', '_')}.png")
+    mouth_image = bpy.data.images.load(mouth_image_path)
     # Iterate over all materials
     for mat in bpy.data.materials:
         if 'Skin' in mat.name and mat.node_tree:
             for node in mat.node_tree.nodes:
                 # Find the image texture node
                 if node.type == 'TEX_IMAGE':
-                    print(mat.name)
                     if node.image:
                         bpy.data.images.remove(node.image, do_unlink=True)
                         # Replace the image
@@ -61,7 +65,7 @@ def replace_skin_texture(modelId):
                     if node.image:
                         bpy.data.images.remove(node.image, do_unlink=True)
                         # Replace the image
-                    node.image = new_image
+                    node.image = mouth_image
 
 def replace_from_json(json):
     if json['hair_style'] is not None and json['hair_style'] != 'bald':
@@ -89,41 +93,60 @@ def write_model(modelId):
             # Remove the texture
             bpy.data.textures.remove(texture)
     # Export the combined model
-    output_model_path = os.path.join(current_dir, f'output/{current_model}.fbx')
-    bpy.ops.export_scene.fbx(
-        filepath=output_model_path,
-        path_mode='COPY',  # Copy all external files into the destination directory
-        embed_textures=True,  # Embed textures in the FBX binary file
-        bake_space_transform=False 
-    )
+    output_model_path = os.path.join(current_dir, f'output/{current_model}.glb')
+#    bpy.ops.export_scene.fbx(
+#        filepath=output_model_path,
+#        path_mode='COPY',  # Copy all external files into the destination directory
+#        embed_textures=True,  # Embed textures in the FBX binary file
+#        bake_space_transform=False 
+#    )
+    export_settings = {
+        'use_selection': False,  # Set to True if you want to export only selected objects
+        'export_format': 'GLB',  # Specify GLB format
+        'export_apply': True,    # Apply modifiers and other settings
+        'filepath': output_model_path
+    }
+
+    # Export the scene to GLB
+    bpy.ops.export_scene.gltf(**export_settings)
     
 def clear_workspace():
+    obs = [o for o in bpy.data.objects
+        if not o.users_scene]
+    bpy.data.batch_remove(obs)
     # Delete all objects, including armatures
     for obj in bpy.data.objects:
         bpy.data.objects.remove(obj, do_unlink=True)
 
     # Clear unused data blocks (materials, textures, etc.)
-    for block in bpy.data.materials:
-        bpy.data.materials.remove(block)
-    for block in bpy.data.armatures:
-        bpy.data.armatures.remove(block)
-    for block in bpy.data.images:
-        bpy.data.images.remove(block)
     for block in bpy.data.meshes:
         bpy.data.meshes.remove(block)
+    for block in bpy.data.armatures:
+        bpy.data.armatures.remove(block)
+    for block in bpy.data.materials:
+        bpy.data.materials.remove(block)
+    for block in bpy.data.images:
+        bpy.data.images.remove(block)
     for block in bpy.data.actions:
         bpy.data.actions.remove(block)
+        
+    for texture in bpy.data.textures:
+        bpy.data.textures.remove(texture)
 
+startrange = 1
+intervalsize = 1
 
-for current_model in range(0, 50):
+for current_model in range(startrange, startrange + intervalsize):
+    clear_workspace()
     clear_workspace()
     # Load the base model
-    model_path = os.path.join(current_dir, 'model.fbx')
-    bpy.ops.import_scene.fbx(filepath=model_path)
+    model_path = os.path.join(current_dir, 'model.glb')
+#    bpy.ops.import_scene.fbx(filepath=model_path)
+    bpy.ops.import_scene.gltf(filepath=model_path)
     file_path = os.path.join(current_dir, f'output/{current_model}.json')
     with open(file_path, 'r') as file:
         data = json.load(file)
     replace_from_json(data)
-    replace_skin_texture(current_model)
+    replace_skin_texture(current_model, data)
     write_model(current_model)
 
