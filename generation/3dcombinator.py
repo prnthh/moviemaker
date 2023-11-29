@@ -41,6 +41,7 @@ def replace_skin_texture(modelId):
             for node in mat.node_tree.nodes:
                 # Find the image texture node
                 if node.type == 'TEX_IMAGE':
+                    print(mat.name)
                     if node.image:
                         bpy.data.images.remove(node.image, do_unlink=True)
                         # Replace the image
@@ -52,6 +53,15 @@ def replace_skin_texture(modelId):
                     # Iterate over the links and remove them
                     for link in alpha_input.links:
                         mat.node_tree.links.remove(link)
+        if 'Mouth' in mat.name and mat.node_tree:
+            for node in mat.node_tree.nodes:
+                # Find the image texture node
+                if node.type == 'TEX_IMAGE':
+                    print(mat.name)
+                    if node.image:
+                        bpy.data.images.remove(node.image, do_unlink=True)
+                        # Replace the image
+                    node.image = new_image
 
 def replace_from_json(json):
     if json['hair_style'] is not None and json['hair_style'] != 'bald':
@@ -105,7 +115,7 @@ def clear_workspace():
         bpy.data.actions.remove(block)
 
 
-for current_model in range(0, 5):
+for current_model in range(0, 50):
     clear_workspace()
     # Load the base model
     model_path = os.path.join(current_dir, 'model.fbx')
